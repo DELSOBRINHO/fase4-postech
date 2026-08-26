@@ -1,32 +1,93 @@
-"""Gera o PDF de slides da apresentação (widescreen 16:9)."""
+"""PDF da apresentação (o que aparece no vídeo). Cada slide traz o texto para ler."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 from reportlab.lib.colors import HexColor, white
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 ROOT = Path(__file__).resolve().parent
+ASSETS = ROOT / "assets_slides"
 OUT = ROOT / "slides_apresentacao.pdf"
 W, H = 1280, 720
 
-FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-FONT_B = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-pdfmetrics.registerFont(TTFont("Sans", FONT))
-pdfmetrics.registerFont(TTFont("SansBold", FONT_B))
+pdfmetrics.registerFont(TTFont("Sans", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"))
+pdfmetrics.registerFont(TTFont("SansBold", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"))
 
 GREEN = HexColor("#0B6E4F")
 GREEN_DARK = HexColor("#0A3D2E")
-GREEN_SOFT = HexColor("#E6F2EC")
 TEAL = HexColor("#1A9B73")
 INK = HexColor("#12352B")
 MUTED = HexColor("#4A6B60")
-BG = HexColor("#F7FBF9")
+BG = HexColor("#F4F8F6")
 CARD = HexColor("#FFFFFF")
 LINE = HexColor("#C5DDD2")
+READ_BG = HexColor("#FBF8EE")
+READ_EDGE = HexColor("#D9CFA8")
+
+
+# Textos lidos em voz alta — iguais aos do roteiro (05-roteiro-video.md).
+T1 = (
+    "Olá, eu sou Delmir Bartolomeu Sobrinho. Este é o sistema preditivo hospitalar "
+    "de classificação da obesidade, desenvolvido no Tech Challenge da fase 4 da POSTECH FIAP."
+)
+T2 = (
+    "Atuo como cientista de dados de um hospital. A obesidade é crônica e multifatorial. "
+    "A triagem hoje é lenta e o olhar de risco varia. O objetivo é padronizar o primeiro "
+    "filtro, sem substituir o médico."
+)
+T3 = (
+    "As entregas da disciplina estão neste aplicativo: pipeline de machine learning, "
+    "modelo acima de setenta e cinco por cento, sistema preditivo no Streamlit, "
+    "painel analítico, repositório no GitHub e este vídeo em visão de negócio."
+)
+T4 = (
+    "O aplicativo tem duas visões. Nesta, o profissional preenche dados biométricos, "
+    "hábitos alimentares e estilo de vida. O IMC já aparece como referência clínica. "
+    "Em seguida, executa o diagnóstico."
+)
+T5 = (
+    "Paciente de quarenta e dois anos, um metro e setenta, cento e vinte quilos. "
+    "O sistema prediz obesidade tipo dois, com IMC de quarenta e um e meio. "
+    "A OMS, só pelo IMC, apontaria tipo três. O gráfico mostra a confiança em cada nível."
+)
+T6 = (
+    "O médico lê três coisas: a classe predita, o IMC com a faixa da OMS e a probabilidade. "
+    "Quando as duas leituras divergem, vale revisar o contexto comportamental. "
+    "Continua sendo apoio à triagem."
+)
+T7 = (
+    "A segunda visão é o painel da gestão. São dois mil cento e onze pacientes. "
+    "Oitenta e dois por cento com histórico familiar, cinquenta e nove por cento sedentários, "
+    "oitenta e oito por cento com consumo calórico frequente. Diagnóstico e painel no mesmo endereço."
+)
+T8 = (
+    "Três achados. Histórico familiar se concentra nos níveis graves. "
+    "Atividade física cai quando a obesidade sobe. Alimento calórico é o hábito dominante. "
+    "O IMC separa os níveis; os hábitos dizem por onde intervir."
+)
+T9 = (
+    "A pipeline padroniza números, transforma categorias e calcula o IMC como métrica de apoio. "
+    "Comparamos Random Forest e Gradient Boosting. O mesmo pré-processamento segue até a aplicação."
+)
+T10 = (
+    "O critério da disciplina era setenta e cinco por cento. O Gradient Boosting chegou a "
+    "noventa e oito vírgula trinta e cinco no teste. O Random Forest, noventa e sete vírgula oitenta e sete. "
+    "O campeão foi serializado e é este que o aplicativo usa."
+)
+T11 = (
+    "O deploy oficial é o Streamlit Cloud: avaliapeso ponto streamlit ponto app. "
+    "O código está no GitHub, branch main. Como extra de produção, o mesmo modelo "
+    "sobe em API FastAPI e em Docker, junto com a tela."
+)
+T12 = (
+    "Na prática, a primeira triagem fica mais curta e padronizada. O painel alimenta prevenção. "
+    "Obrigado. Fico à disposição da banca."
+)
 
 
 def wrap(c: canvas.Canvas, text: str, font: str, size: float, max_w: float) -> list[str]:
@@ -45,404 +106,328 @@ def wrap(c: canvas.Canvas, text: str, font: str, size: float, max_w: float) -> l
     return lines
 
 
-def band(c: canvas.Canvas) -> None:
+def footer(c: canvas.Canvas, n: int, total: int) -> None:
     c.setFillColor(GREEN)
-    c.rect(0, 0, 18, H, fill=1, stroke=0)
-    c.setFillColor(BG)
-    c.rect(18, 0, W - 18, H, fill=1, stroke=0)
-
-
-def footer(c: canvas.Canvas, n: int, total: int, cue: str) -> None:
-    c.setFillColor(GREEN)
-    c.rect(18, 0, W - 18, 42, fill=1, stroke=0)
+    c.rect(0, 0, W, 36, fill=1, stroke=0)
     c.setFillColor(white)
     c.setFont("Sans", 10)
-    c.drawString(48, 16, "Tech Challenge Fase 4  ·  POSTECH FIAP")
-    c.drawRightString(W - 36, 16, f"{cue}   {n}/{total}")
+    c.drawString(40, 14, "Tech Challenge Fase 4  ·  sistema preditivo de obesidade")
+    c.drawRightString(W - 28, 14, f"{n} / {total}")
 
 
-def heading(c: canvas.Canvas, title: str, y: float = 640) -> None:
+def read_box(c: canvas.Canvas, text: str, y0: float = 44) -> float:
+    """Bloco inferior: texto que se lê no vídeo (sem rótulo de teleprompter)."""
+    pad = 16
+    x, w = 28, W - 56
+    lines = wrap(c, text, "Sans", 15, w - 2 * pad)
+    box_h = 22 + len(lines) * 21
+    c.setFillColor(READ_BG)
+    c.setStrokeColor(READ_EDGE)
+    c.setLineWidth(1)
+    c.roundRect(x, y0, w, box_h, 8, fill=1, stroke=1)
+    c.setFillColor(INK)
+    c.setFont("Sans", 15)
+    ty = y0 + box_h - 20
+    for line in lines:
+        c.drawString(x + pad, ty, line)
+        ty -= 21
+    return y0 + box_h
+
+
+def heading(c: canvas.Canvas, title: str) -> None:
+    c.setFillColor(BG)
+    c.rect(0, 0, W, H, fill=1, stroke=0)
     c.setFillColor(GREEN)
-    c.setFont("SansBold", 32)
-    c.drawString(56, y, title)
-    c.setStrokeColor(TEAL)
-    c.setLineWidth(4)
-    c.line(56, y - 14, 280, y - 14)
+    c.rect(0, H - 78, W, 78, fill=1, stroke=0)
+    c.setFillColor(white)
+    c.setFont("SansBold", 26)
+    c.drawString(40, H - 48, title)
 
 
-def bullets(c: canvas.Canvas, items: list[str], x: float, y: float, size: float = 18, gap: float = 42) -> None:
-    for item in items:
-        c.setFillColor(TEAL)
-        c.circle(x, y + 6, 5, fill=1, stroke=0)
-        c.setFillColor(INK)
-        c.setFont("Sans", size)
-        lines = wrap(c, item, "Sans", size, W - x - 80)
-        for i, line in enumerate(lines):
-            c.drawString(x + 22, y - i * (size + 6), line)
-        y -= gap + max(0, len(lines) - 1) * (size + 6)
+def shot(c: canvas.Canvas, name: str, x: float, y: float, w: float, h: float) -> None:
+    path = ASSETS / name
+    c.setFillColor(CARD)
+    c.setStrokeColor(LINE)
+    c.roundRect(x - 4, y - 4, w + 8, h + 8, 8, fill=1, stroke=1)
+    c.drawImage(
+        ImageReader(str(path)),
+        x,
+        y,
+        width=w,
+        height=h,
+        preserveAspectRatio=True,
+        anchor="c",
+        mask="auto",
+    )
 
 
 def card(c: canvas.Canvas, x: float, y: float, w: float, h: float) -> None:
     c.setFillColor(CARD)
     c.setStrokeColor(LINE)
     c.setLineWidth(1)
-    c.roundRect(x, y, w, h, 12, fill=1, stroke=1)
+    c.roundRect(x, y, w, h, 10, fill=1, stroke=1)
 
 
-def kpi(c: canvas.Canvas, x: float, y: float, w: float, h: float, value: str, label: str) -> None:
-    card(c, x, y, w, h)
-    c.setFillColor(GREEN)
-    c.setFont("SansBold", 28)
-    c.drawCentredString(x + w / 2, y + h / 2 + 8, value)
-    c.setFillColor(MUTED)
-    c.setFont("Sans", 12)
-    c.drawCentredString(x + w / 2, y + 22, label)
-
-
-def slide_title(c: canvas.Canvas, n: int, total: int) -> None:
+def slide_01(c: canvas.Canvas, n: int, t: int) -> None:
     c.setFillColor(GREEN_DARK)
     c.rect(0, 0, W, H, fill=1, stroke=0)
     c.setFillColor(TEAL)
-    c.rect(0, 0, W, 12, fill=1, stroke=0)
+    c.rect(0, 0, W, 10, fill=1, stroke=0)
     c.setFillColor(white)
     c.setFont("Sans", 14)
-    c.drawString(64, 640, "POSTECH FIAP  ·  Tech Challenge Fase 4")
-    c.setFont("SansBold", 40)
-    c.drawString(64, 520, "Sistema de apoio à decisão médica")
+    c.drawString(56, 620, "POSTECH FIAP  ·  Tech Challenge Fase 4")
+    c.setFont("SansBold", 38)
+    c.drawString(56, 520, "Sistema preditivo hospitalar")
     c.setFont("SansBold", 28)
-    c.drawString(64, 470, "Predição do nível de obesidade")
+    c.drawString(56, 472, "Classificação do nível de obesidade")
     c.setStrokeColor(TEAL)
     c.setLineWidth(4)
-    c.line(64, 440, 320, 440)
+    c.line(56, 444, 300, 444)
     c.setFont("Sans", 16)
-    c.drawString(64, 380, "Visão hospitalar  ·  diagnóstico preditivo  ·  painel analítico")
-    c.setFont("Sans", 14)
-    c.drawString(64, 80, "Data Viz & Production Models")
-    c.drawRightString(W - 64, 80, f"{n}/{total}")
+    c.drawString(56, 400, "Aplicação Streamlit  ·  diagnóstico  ·  painel analítico")
+    read_box(c, T1, y0=56)
+    c.setFillColor(white)
+    c.setFont("Sans", 10)
+    c.drawRightString(W - 28, 20, f"{n} / {t}")
 
 
-def slide_problem(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
+def slide_02(c: canvas.Canvas, n: int, t: int) -> None:
     heading(c, "O problema no hospital")
-    bullets(
-        c,
-        [
-            "Obesidade é doença crônica e multifatorial — genética, ambiente e hábitos.",
-            "A triagem manual é lenta e o olhar de risco varia de profissional para profissional.",
-            "A equipe precisa de um primeiro filtro padronizado, em linguagem clínica.",
-            "O sistema não substitui o médico: apoia a decisão e reduz o tempo da primeira avaliação.",
-        ],
-        72,
-        540,
-    )
-    footer(c, n, total, "Bloco 1  ·  0:00–1:00")
-
-
-def slide_proposal(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "O que foi entregue")
-    boxes = [
-        ("Diagnóstico", "Formulário clínico e nível estimado de obesidade, com IMC e confiança do modelo."),
-        ("Painel", "Visão populacional para a gestão: hábitos, histórico familiar e atividade física."),
-        ("Produção", "Aplicação no Streamlit Cloud. Extra: API FastAPI e containers Docker."),
+    items = [
+        ("Doença crônica", "A obesidade envolve genética, ambiente e comportamento."),
+        ("Triagem desigual", "O primeiro olhar de risco muda de profissional para profissional."),
+        ("Apoio, não substituto", "O sistema padroniza a classificação em sete níveis e devolve a conduta à equipe."),
     ]
-    x = 56
-    for title, text in boxes:
-        card(c, x, 180, 370, 360)
+    x = 40
+    for title, body in items:
+        card(c, x, 268, 380, 250)
         c.setFillColor(GREEN)
-        c.roundRect(x + 24, 480, 14, 14, 3, fill=1, stroke=0)
-        c.setFont("SansBold", 20)
-        c.drawString(x + 48, 480, title)
-        c.setFillColor(INK)
-        c.setFont("Sans", 14)
-        y = 430
-        for line in wrap(c, text, "Sans", 14, 310):
-            c.drawString(x + 24, y, line)
-            y -= 22
-        x += 390
-    footer(c, n, total, "Bloco 1  ·  0:00–1:00")
-
-
-def slide_cohort(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "A coorte")
-    kpi(c, 56, 380, 270, 160, "2.111", "pacientes")
-    kpi(c, 350, 380, 270, 160, "7", "níveis de peso")
-    kpi(c, 644, 380, 270, 160, "17", "variáveis clínicas")
-    kpi(c, 938, 380, 270, 160, "0", "nulos na base")
-    c.setFillColor(INK)
-    c.setFont("Sans", 16)
-    c.drawString(
-        56,
-        300,
-        "Classes relativamente equilibradas: o modelo não fica cego para um nível raro.",
-    )
-    c.setFillColor(MUTED)
-    c.setFont("Sans", 14)
-    c.drawString(56, 250, "Abaixo do peso  →  peso normal  →  sobrepeso I e II  →  obesidade I, II e III")
-    footer(c, n, total, "Bloco 2  ·  1:00–2:10")
-
-
-def slide_insights(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "Três achados que mudam conduta")
-    rows = [
-        ("81,8%", "Histórico familiar", "O “sim” se concentra nos níveis mais graves. Anamnese familiar é sinal de risco."),
-        ("59,0%", "Sedentários", "A atividade física cai conforme a obesidade sobe. Exercício entra no plano, não no discurso."),
-        ("88,4%", "Alimentos calóricos", "Hábito dominante da coorte. Nutrição precisa entrar cedo, não só depois do rótulo."),
-    ]
-    y = 500
-    for value, title, text in rows:
-        card(c, 56, y - 20, 1168, 100)
-        c.setFillColor(GREEN)
-        c.setFont("SansBold", 26)
-        c.drawString(80, y + 30, value)
         c.setFont("SansBold", 16)
-        c.drawString(250, y + 36, title)
+        c.drawString(x + 24, 468, title)
         c.setFillColor(INK)
         c.setFont("Sans", 14)
-        c.drawString(250, y + 8, text)
-        y -= 120
-    footer(c, n, total, "Bloco 2  ·  1:00–2:10")
+        yy = 418
+        for line in wrap(c, body, "Sans", 14, 330):
+            c.drawString(x + 24, yy, line)
+            yy -= 22
+        x += 400
+    read_box(c, T2)
+    footer(c, n, t)
 
 
-def slide_pipeline(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "Como o modelo foi construído")
-    steps = [
-        ("1", "Dados clínicos", "Biometria, hábitos, família e rotina."),
-        ("2", "IMC de apoio", "Peso dividido pela altura ao quadrado."),
-        ("3", "Preparação", "Números na mesma escala; categorias em colunas."),
-        ("4", "Dois modelos", "Random Forest e Gradient Boosting."),
+def slide_03(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "Entregas da disciplina")
+    checks = [
+        "Pipeline de machine learning, com preparação dos dados e treino.",
+        "Modelo com assertividade acima de 75% no teste — na prática, 98,35%.",
+        "Aplicação preditiva no Streamlit, em produção na nuvem.",
+        "Painel analítico com insights para a equipe médica.",
+        "Repositório no GitHub com o código e o modelo.",
+        "Este vídeo: sistema e dashboard em visão de negócio.",
     ]
-    x = 56
-    for num, title, text in steps:
-        card(c, x, 280, 280, 260)
-        c.setFillColor(GREEN)
-        c.circle(x + 36, 500, 16, fill=1, stroke=0)
+    top = 548
+    for i, item in enumerate(checks):
+        y = top - i * 52
+        card(c, 40, y - 6, 1200, 44)
+        c.setFillColor(TEAL)
+        c.circle(68, y + 16, 8, fill=1, stroke=0)
         c.setFillColor(white)
-        c.setFont("SansBold", 14)
-        c.drawCentredString(x + 36, 494, num)
+        c.setFont("SansBold", 11)
+        c.drawCentredString(68, y + 12, "✓")
+        c.setFillColor(INK)
+        c.setFont("Sans", 15)
+        c.drawString(96, y + 10, item)
+    read_box(c, T3, y0=40)
+    footer(c, n, t)
+
+
+def slide_04(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "O aplicativo — diagnóstico preditivo")
+    shot(c, "01_formulario.png", 40, 196, 1200, 336)
+    read_box(c, T4)
+    footer(c, n, t)
+
+
+def slide_05(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "Exemplo de diagnóstico")
+    shot(c, "02_diagnostico.png", 40, 196, 1200, 336)
+    read_box(c, T5)
+    footer(c, n, t)
+
+
+def slide_06(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "Como a equipe lê o resultado")
+    boxes = [
+        ("Classe predita", "O nível estimado em sete classes, em português."),
+        ("IMC e faixa OMS", "Métrica clínica ao lado da predição, para cruzar as duas leituras."),
+        ("Confiança", "Probabilidade em cada nível. Útil quando o caso está na fronteira."),
+        ("Limite", "Apoio à triagem. Conduta — dieta, exame, encaminhamento — é da equipe."),
+    ]
+    positions = [(40, 378), (650, 378), (40, 218), (650, 218)]
+    for (title, body), (x, y) in zip(boxes, positions):
+        card(c, x, y, 590, 140)
         c.setFillColor(GREEN)
         c.setFont("SansBold", 16)
-        c.drawString(x + 24, 440, title)
+        c.drawString(x + 24, y + 100, title)
         c.setFillColor(INK)
-        c.setFont("Sans", 13)
-        yy = 400
-        for line in wrap(c, text, "Sans", 13, 230):
+        c.setFont("Sans", 14)
+        yy = y + 70
+        for line in wrap(c, body, "Sans", 14, 540):
             c.drawString(x + 24, yy, line)
             yy -= 20
-        x += 300
-    c.setFillColor(MUTED)
-    c.setFont("Sans", 14)
-    c.drawString(56, 210, "Leitura honesta: IMC pesa — e isso é coerente com a OMS. Hábitos mostram por onde intervir.")
-    footer(c, n, total, "Bloco 3  ·  2:10–3:20")
+    read_box(c, T6, y0=40)
+    footer(c, n, t)
 
 
-def slide_result(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "Resultado no conjunto de teste")
-    card(c, 56, 220, 560, 340)
+def slide_07(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "Painel analítico — visão da gestão")
+    shot(c, "03_painel_kpis.png", 40, 196, 1200, 336)
+    read_box(c, T7)
+    footer(c, n, t)
+
+
+def slide_08(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "Hábitos que mudam a conduta")
+    shot(c, "04_painel_graficos.png", 40, 196, 1200, 336)
+    read_box(c, T8)
+    footer(c, n, t)
+
+
+def slide_09(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "Pipeline de machine learning")
+    steps = [
+        ("1", "Dados", "Biometria, família, alimentação e rotina."),
+        ("2", "IMC", "Peso sobre altura ao quadrado, como apoio clínico."),
+        ("3", "Preparação", "Números na mesma escala; categorias transformadas."),
+        ("4", "Modelos", "Random Forest e Gradient Boosting, no mesmo fluxo."),
+    ]
+    x = 40
+    for num, title, body in steps:
+        card(c, x, 268, 290, 262)
+        c.setFillColor(GREEN)
+        c.circle(x + 36, 492, 16, fill=1, stroke=0)
+        c.setFillColor(white)
+        c.setFont("SansBold", 14)
+        c.drawCentredString(x + 36, 486, num)
+        c.setFillColor(GREEN)
+        c.setFont("SansBold", 18)
+        c.drawString(x + 24, 432, title)
+        c.setFillColor(INK)
+        c.setFont("Sans", 14)
+        yy = 392
+        for line in wrap(c, body, "Sans", 14, 240):
+            c.drawString(x + 24, yy, line)
+            yy -= 22
+        x += 310
+    read_box(c, T9)
+    footer(c, n, t)
+
+
+def slide_10(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "Assertividade do modelo")
+    card(c, 40, 268, 580, 262)
     c.setFillColor(MUTED)
     c.setFont("Sans", 14)
-    c.drawString(88, 510, "Mínimo da disciplina")
+    c.drawString(72, 490, "Mínimo exigido")
     c.setFillColor(INK)
-    c.setFont("SansBold", 48)
-    c.drawString(88, 430, "75%")
+    c.setFont("SansBold", 52)
+    c.drawString(72, 418, "75%")
     c.setFillColor(MUTED)
     c.setFont("Sans", 14)
-    c.drawString(88, 360, "Modelo campeão  ·  Gradient Boosting")
+    c.drawString(72, 348, "Campeão no teste  ·  Gradient Boosting")
     c.setFillColor(GREEN)
-    c.setFont("SansBold", 72)
-    c.drawString(88, 260, "98,35%")
-
-    card(c, 660, 220, 560, 340)
+    c.setFont("SansBold", 52)
+    c.drawString(72, 280, "98,35%")
+    card(c, 660, 268, 580, 262)
     c.setFillColor(INK)
     c.setFont("SansBold", 18)
-    c.drawString(692, 500, "Comparação")
-    lines = [
+    c.drawString(692, 490, "Comparação")
+    c.setFont("Sans", 15)
+    y = 440
+    for line in (
         "Gradient Boosting    98,35% no teste",
         "Random Forest           97,87% no teste",
         "Validação cruzada     97,5%  ±  0,8%",
-        "",
-        "Os dois passam do critério. O campeão",
-        "foi serializado e vai para a aplicação.",
-    ]
-    c.setFont("Sans", 15)
-    y = 450
-    for line in lines:
-        c.setFillColor(INK if line else MUTED)
+        "Os dois passam do critério.",
+        "O campeão é o modelo do aplicativo.",
+    ):
         c.drawString(692, y, line)
-        y -= 32
-    footer(c, n, total, "Bloco 3  ·  2:10–3:20")
+        y -= 36
+    read_box(c, T10)
+    footer(c, n, t)
 
 
-def slide_demo(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "Demonstração — paciente de triagem")
-    c.setFillColor(INK)
-    c.setFont("Sans", 16)
-    c.drawString(56, 580, "A partir daqui, a tela é o aplicativo. Paciente simulado:")
-    left = [
-        ("Gênero / idade", "Masculino, 42 anos"),
-        ("Altura / peso", "1,70 m  ·  120 kg"),
-        ("IMC esperado", "≈ 41,5  ·  obesidade III (OMS)"),
-        ("Família / calóricos", "Sim  ·  Sim"),
+def slide_11(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "Produção e extras")
+    boxes = [
+        ("Streamlit Cloud", "avaliapeso.streamlit.app", "Deploy oficial: diagnóstico e painel no mesmo link."),
+        ("GitHub", "fase4-postech / main", "Código, pipeline, modelo e documentação."),
+        ("Extra MLOps", "FastAPI + Docker", "API de inferência e containers unindo API e tela."),
     ]
-    right = [
-        ("Atividade física", "Nenhuma"),
-        ("Água / telas", "Baixa  ·  mais de 5 h"),
-        ("Transporte", "Automóvel"),
-        ("Ação", "Executar diagnóstico clínico"),
-    ]
-    y = 480
-    for (a, b), (d, e) in zip(left, right):
-        card(c, 56, y - 10, 560, 70)
-        card(c, 660, y - 10, 560, 70)
-        c.setFillColor(MUTED)
-        c.setFont("Sans", 11)
-        c.drawString(80, y + 32, a)
-        c.drawString(684, y + 32, d)
-        c.setFillColor(INK)
-        c.setFont("SansBold", 16)
-        c.drawString(80, y + 8, b)
-        c.drawString(684, y + 8, e)
-        y -= 88
-    footer(c, n, total, "Bloco 4  ·  3:20–5:00  ·  ir ao app")
-
-
-def slide_readout(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "Como ler o resultado")
-    items = [
-        ("Diagnóstico predito", "O nível estimado em sete classes, em português."),
-        ("IMC e faixa OMS", "Métrica clínica ao lado da predição, para o médico cruzar as duas leituras."),
-        ("Gráfico de confiança", "Probabilidade em cada nível. Útil quando o caso está na fronteira."),
-        ("Limite ético", "Apoio à triagem. Conduta — dieta, exame, encaminhamento — é da equipe."),
-    ]
-    y = 500
-    for title, text in items:
-        card(c, 56, y - 16, 1168, 88)
+    x = 40
+    for title, sub, body in boxes:
+        card(c, x, 268, 390, 262)
         c.setFillColor(GREEN)
-        c.setFont("SansBold", 16)
-        c.drawString(88, y + 36, title)
+        c.setFont("SansBold", 18)
+        c.drawString(x + 24, 488, title)
+        c.setFillColor(TEAL)
+        c.setFont("SansBold", 13)
+        c.drawString(x + 24, 456, sub)
         c.setFillColor(INK)
         c.setFont("Sans", 14)
-        c.drawString(88, y + 8, text)
-        y -= 108
-    footer(c, n, total, "Bloco 4  ·  3:20–5:00")
+        yy = 408
+        for line in wrap(c, body, "Sans", 14, 340):
+            c.drawString(x + 24, yy, line)
+            yy -= 22
+        x += 410
+    read_box(c, T11)
+    footer(c, n, t)
 
 
-def slide_panel(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "Painel para a gestão")
-    kpi(c, 56, 430, 270, 130, "2.111", "pacientes")
-    kpi(c, 350, 430, 270, 130, "81,8%", "histórico familiar")
-    kpi(c, 644, 430, 270, 130, "59,0%", "sedentários")
-    kpi(c, 938, 430, 270, 130, "88,4%", "consumo calórico")
-    c.setFillColor(INK)
-    c.setFont("Sans", 16)
-    bullets(
-        c,
-        [
-            "Onde investir prevenção: atividade física, ultraprocessados e pergunta de histórico familiar na recepção.",
-            "Diagnóstico e painel no mesmo endereço: a equipe não troca de ferramenta.",
-        ],
-        72,
-        360,
-        size=16,
-        gap=48,
-    )
-    footer(c, n, total, "Bloco 5  ·  5:00–5:50  ·  ir ao painel")
-
-
-def slide_impact(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "Impacto no atendimento")
-    bullets(
-        c,
-        [
-            "Primeira conversa no ambulatório mais curta e padronizada em sete níveis.",
-            "Insumo para campanha interna de nutrição e atividade física.",
-            "Próximo passo no hospital: validar em pacientes da unidade e, se fizer sentido, integrar a API ao prontuário.",
-        ],
-        72,
-        500,
-        size=18,
-        gap=56,
-    )
-    footer(c, n, total, "Bloco 6  ·  5:50–6:30")
-
-
-def slide_links(c: canvas.Canvas, n: int, total: int) -> None:
-    band(c)
-    heading(c, "Onde acessar")
-    card(c, 56, 380, 560, 180)
-    card(c, 660, 380, 560, 180)
-    c.setFillColor(MUTED)
-    c.setFont("Sans", 13)
-    c.drawString(88, 520, "Aplicação e painel")
-    c.drawString(692, 520, "Código-fonte")
-    c.setFillColor(GREEN)
-    c.setFont("SansBold", 18)
-    c.drawString(88, 470, "avaliapeso.streamlit.app")
-    c.setFont("SansBold", 16)
-    c.drawString(692, 470, "github.com/DELSOBRINHO")
-    c.setFillColor(INK)
-    c.setFont("Sans", 14)
-    c.drawString(88, 430, "Aba Diagnóstico e aba Painel analítico")
-    c.drawString(692, 430, "fase4-postech  ·  branch main")
-    c.setFillColor(MUTED)
-    c.setFont("Sans", 14)
-    c.drawString(56, 300, "O extra de produção (API FastAPI + Docker) está no repositório. O link da banca é o aplicativo na nuvem.")
-    footer(c, n, total, "Bloco 6  ·  5:50–6:30")
-
-
-def slide_end(c: canvas.Canvas, n: int, total: int) -> None:
-    c.setFillColor(GREEN_DARK)
-    c.rect(0, 0, W, H, fill=1, stroke=0)
-    c.setFillColor(TEAL)
-    c.rect(0, 0, W, 12, fill=1, stroke=0)
-    c.setFillColor(white)
-    c.setFont("SansBold", 40)
-    c.drawCentredString(W / 2, 400, "Obrigado")
-    c.setFont("Sans", 18)
-    c.drawCentredString(W / 2, 340, "Fico à disposição da banca.")
-    c.setStrokeColor(TEAL)
-    c.setLineWidth(3)
-    c.line(W / 2 - 80, 310, W / 2 + 80, 310)
-    c.setFont("Sans", 13)
-    c.drawCentredString(W / 2, 250, "avaliapeso.streamlit.app")
-    c.drawCentredString(W / 2, 220, "github.com/DELSOBRINHO/fase4-postech")
-    c.setFont("Sans", 11)
-    c.drawCentredString(W / 2, 80, f"{n}/{total}")
+def slide_12(c: canvas.Canvas, n: int, t: int) -> None:
+    heading(c, "Impacto e encerramento")
+    bullets = [
+        "Primeira triagem mais curta e padronizada em sete níveis.",
+        "Painel para campanha de prevenção: família, exercício e alimentação.",
+        "Próximo passo no hospital: validar na unidade e, se fizer sentido, ligar a API ao prontuário.",
+    ]
+    y = 520
+    for item in bullets:
+        card(c, 40, y - 12, 1200, 56)
+        c.setFillColor(TEAL)
+        c.circle(68, y + 12, 6, fill=1, stroke=0)
+        c.setFillColor(INK)
+        c.setFont("Sans", 16)
+        c.drawString(96, y + 6, item)
+        y -= 72
+    read_box(c, T12)
+    footer(c, n, t)
 
 
 def main() -> None:
     pages = [
-        slide_title,
-        slide_problem,
-        slide_proposal,
-        slide_cohort,
-        slide_insights,
-        slide_pipeline,
-        slide_result,
-        slide_demo,
-        slide_readout,
-        slide_panel,
-        slide_impact,
-        slide_links,
-        slide_end,
+        slide_01,
+        slide_02,
+        slide_03,
+        slide_04,
+        slide_05,
+        slide_06,
+        slide_07,
+        slide_08,
+        slide_09,
+        slide_10,
+        slide_11,
+        slide_12,
     ]
     total = len(pages)
     c = canvas.Canvas(str(OUT), pagesize=(W, H))
-    c.setTitle("Apresentação — sistema preditivo de obesidade")
+    c.setTitle("Apresentação do sistema preditivo de obesidade")
     c.setAuthor("Tech Challenge Fase 4")
     for i, fn in enumerate(pages, start=1):
         fn(c, i, total)
         c.showPage()
     c.save()
-    print(f"wrote {OUT}")
+    print(f"wrote {OUT} ({total} pages)")
 
 
 if __name__ == "__main__":

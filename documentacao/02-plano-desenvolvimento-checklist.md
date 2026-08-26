@@ -149,7 +149,7 @@ Itens de Cloud já publicados; vídeo e upload na plataforma FIAP ainda abertos.
 - [x] Publicar o app no Streamlit Cloud (`app/app.py` + `requirements.txt` da raiz)
 - [x] Validar diagnóstico e painel na URL de produção (`https://avaliapeso.streamlit.app/`)
 - [x] Colar links da aplicação, do painel e do GitHub em `entrega_tech_challenge_fase4.txt`
-- [ ] Gravar vídeo de 4–10 min seguindo o roteiro
+- [ ] Gravar vídeo de 4–10 min com o PDF da apresentação em tela cheia (roteiro 1:1 por slide)
 - [ ] Publicar o vídeo (YouTube ou Loom) em modo acessível ao avaliador
 - [ ] Colar o link do vídeo em `entrega_tech_challenge_fase4.txt`
 - [ ] Fazer upload do `.txt` (ou `.doc`) na plataforma da FIAP

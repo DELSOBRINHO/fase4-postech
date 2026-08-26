@@ -1,185 +1,128 @@
-# Roteiro falado do vídeo (5 a 7 minutos)
+# Roteiro do vídeo — um texto por slide
 
 Duração-alvo: **6 minutos** (limite oficial: 4–10).  
-Fale como **cientista de dados do hospital**, não como programador.  
-Grave a tela do app em https://avaliapeso.streamlit.app/ em tela cheia. Você pode aparecer num canto pequeno; o que precisa ficar legível são os gráficos e o diagnóstico.
+Fale como **cientista de dados do hospital**, não como programador.
 
-**Antes de gravar:** abrir o PDF `documentacao/slides_apresentacao.pdf` em modo apresentação (tela cheia) e o app em https://avaliapeso.streamlit.app/ numa segunda janela. Zoom do navegador em 100–110%. Ter este texto à frente (teleprompter ou segunda tela).
+**Como gravar:** abra só o PDF `documentacao/slides_apresentacao.pdf` em tela cheia (modo apresentação). Avance um slide, leia o texto da faixa inferior (o mesmo parágrafo abaixo), avance. **Não abra o Streamlit** — as telas do aplicativo já estão nos slides.
 
-**Como combinar slides e app**
-
-| Tempo | Slides | Depois |
-| --- | --- | --- |
-| 0:00–1:00 | 1 a 3 (capa, problema, entrega) | — |
-| 1:00–2:10 | 4 e 5 (coorte e achados), depois **ir ao painel do app** | aba Painel |
-| 2:10–3:20 | 6 e 7 (modelo e resultado) | — |
-| 3:20–5:00 | 8 e 9 (paciente e leitura), depois **ir ao diagnóstico** | preencher o paciente |
-| 5:00–5:50 | 10, depois **voltar ao painel** | KPIs |
-| 5:50–6:30 | 11 a 13 (impacto, links, obrigado) | URL na barra |
-
-**Links para citar no fechamento**
+**Links para citar nos slides 7, 11 e 12**
 
 - App e painel: https://avaliapeso.streamlit.app/
 - Código: https://github.com/DELSOBRINHO/fase4-postech/tree/main
 
 ---
 
-## Bloco 1 — Quem sou e qual é o problema (0:00 a 1:00)
+## Slide 1 — Capa
 
-**Tela:** slides 1–3. Ainda não abrir o app.
+**Tela:** título do sistema.
 
-**Fale:**
-
-> Olá, eu sou Delmir Bartolomeu Sobrinho, aluno da POSTECH FIAP, fase 4 — Data Viz and Production Models.
->
-> Neste Tech Challenge eu atuo como cientista de dados de um hospital. A demanda da equipe médica é clara: apoiar o diagnóstico precoce da obesidade, que é uma doença crônica, multifatorial, e que hoje sobrecarrega a triagem no ambulatório.
->
-> O que entregamos não é um substituto do médico. É um sistema de apoio à decisão: o profissional preenche dados do paciente, recebe o nível estimado de obesidade — de abaixo do peso até obesidade tipo III — e a gestão ganha um painel com os fatores de risco da coorte.
->
-> Em uma frase: reduzir o tempo da primeira triagem e padronizar o olhar de risco, com linguagem clínica.
-
-**Não fale:** nomes de biblioteca, Git, Docker. Isso fica para o bloco 3, bem curto.
+> Olá, eu sou Delmir Bartolomeu Sobrinho. Este é o sistema preditivo hospitalar de classificação da obesidade, desenvolvido no Tech Challenge da fase 4 da POSTECH FIAP.
 
 ---
 
-## Bloco 2 — Os dados e o que o hospital precisa enxergar (1:00 a 2:10)
+## Slide 2 — O problema no hospital
 
-**Tela:** slides 4–5; em seguida a aba **Painel analítico e insights** no app. Deixe os quatro KPIs visíveis. Role até o gráfico de histórico familiar e o de atividade física.
+**Tela:** doença crônica, triagem desigual, apoio (não substituto).
 
-**Fale (olhando os números na tela):**
-
-> A base tem 2.111 pacientes e sete níveis de peso, relativamente equilibrados. Isso importa porque o modelo não fica cego para uma classe rara.
->
-> Três achados que mudam conduta no ambulatório.
->
-> Primeiro: cerca de 82% da coorte tem histórico familiar de excesso de peso. Nos gráficos, esse “sim” se concentra nos níveis mais graves. Ou seja: a anamnese familiar não é detalhe — é sinal de risco.
->
-> Segundo: quase 60% estão sedentários. A frequência de atividade física cai conforme o nível de obesidade sobe. Campanha de exercício não é discurso; é o padrão que os dados mostram.
->
-> Terceiro: o consumo frequente de alimentos muito calóricos aparece em cerca de 88% dos pacientes. É o hábito dominante. Nutrição entra cedo no plano, não só depois do diagnóstico “fechado”.
->
-> O IMC separa bem os níveis, como a clínica já espera. O valor do estudo é cruzar o IMC com hábitos: aí o médico sabe *por onde intervir*.
-
-**Clique / role:** KPI → gráfico “Histórico familiar × nível” → boxplot de FAF. Não precisa mostrar todos os oito gráficos.
+> Atuo como cientista de dados de um hospital. A obesidade é crônica e multifatorial. A triagem hoje é lenta e o olhar de risco varia. O objetivo é padronizar o primeiro filtro, sem substituir o médico.
 
 ---
 
-## Bloco 3 — Como o modelo foi feito (sem virar aula de código) (2:10 a 3:20)
+## Slide 3 — Entregas da disciplina
 
-**Tela:** slides 6–7. Não abrir notebook.
+**Tela:** lista das entregas oficiais.
 
-**Fale:**
-
-> Do lado técnico, montamos uma pipeline única: dados numéricos padronizados, dados categóricos em one-hot, e o IMC calculado como métrica clínica de apoio — peso sobre altura ao quadrado.
->
-> Comparamos duas famílias de modelo: Random Forest e Gradient Boosting. O campeão no teste foi o Gradient Boosting, com 98,35% de acerto. O Random Forest ficou em 97,87%. O critério da disciplina era 75%. Passamos com folga.
->
-> Uma leitura honesta para a banca médica: altura e peso, via IMC, têm peso grande na classificação — e isso é coerente com a OMS. Os hábitos não “dispensam” o IMC; eles explicam o contexto da intervenção: família, caloria, sedentarismo.
->
-> O modelo está em produção no Streamlit Cloud. Como extra de produção, o mesmo modelo também sobe numa API FastAPI e em container Docker, junto com a tela. O link da entrega da disciplina é o aplicativo na nuvem, que é o que o médico usa.
-
-**Se estiver muito longo, corte o parágrafo do extra FastAPI/Docker** (são ~15 segundos).
+> As entregas da disciplina estão neste aplicativo: pipeline de machine learning, modelo acima de setenta e cinco por cento, sistema preditivo no Streamlit, painel analítico, repositório no GitHub e este vídeo em visão de negócio.
 
 ---
 
-## Bloco 4 — Demo do diagnóstico (3:20 a 5:00) — a parte mais importante
+## Slide 4 — O aplicativo (formulário)
 
-**Tela:** slides 8–9 e, em seguida, a aba **Diagnóstico preditivo** no app. Preencha **enquanto fala**. Não leia cada rótulo técnico (FAVC, FAF); traduza.
+**Tela:** captura da visão Diagnóstico preditivo.
 
-### Paciente de demonstração (alto risco)
-
-Use estes valores — IMC fica em torno de **41,5** (obesidade tipo III pela OMS):
-
-| Campo | O que selecionar |
-| --- | --- |
-| Gênero | Masculino |
-| Idade | 42 |
-| Altura | 1,70 m |
-| Peso | 120 kg |
-| Histórico familiar | Sim |
-| Alimentos muito calóricos | Sim |
-| Vegetais | 1 (raro) |
-| Refeições | 2 |
-| Lanches | Frequentemente |
-| Monitora calorias | Não |
-| Fumante | Não |
-| Água | 1 (menos de 1 L) |
-| Atividade física | 0 (nenhuma) |
-| Telas | 2 (mais de 5 h) |
-| Álcool | Às vezes |
-| Transporte | Automóvel |
-
-**Fale enquanto preenche:**
-
-> Vou simular um paciente de 42 anos, 1 metro e 70, 120 quilos. O IMC já dispara para a faixa de obesidade grau III pela referência da OMS. Tem histórico familiar, come muito alimento calórico, quase não se exercita e passa o dia sentado, de carro e em tela.
->
-> Isso é o perfil que o ambulatório não pode deixar passar na triagem.
-
-**Clique em Executar diagnóstico clínico.**
-
-**Fale olhando o resultado (adapte se a classe predita for outra; o esperado é obesidade tipo III):**
-
-> O sistema devolve o diagnóstico predito — neste caso, obesidade tipo III — e mostra o IMC calculado, 41,5, alinhado à faixa da OMS.
->
-> Ao lado, o gráfico de confiança: o modelo não dá só um rótulo; ele mostra a probabilidade em cada nível. Isso é útil quando o caso está na fronteira entre sobrepeso e obesidade: o médico vê a dúvida, não um número mágico.
->
-> De novo: apoio à triagem. A conduta — dieta, exame, encaminhamento — continua sendo da equipe.
-
-Se o gráfico demorar um segundo, fique em silêncio; não peça desculpa.
+> O aplicativo tem duas visões. Nesta, o profissional preenche dados biométricos, hábitos alimentares e estilo de vida. O IMC já aparece como referência clínica. Em seguida, executa o diagnóstico.
 
 ---
 
-## Bloco 5 — Demo do painel para a gestão (5:00 a 5:50)
+## Slide 5 — Exemplo de diagnóstico
 
-**Tela:** slide 10 e depois a aba **Painel analítico e insights**. Mostre KPIs e **dois** gráficos. Role até a leitura clínica do rodapé.
+**Tela:** captura do resultado (obesidade tipo II, IMC 41,52).
 
-**Fale:**
-
-> Para a gestão hospitalar, a outra aba responde: onde investir prevenção?
->
-> Quatro números de prontuário populacional: 2.111 pacientes, 82% com histórico familiar, 59% sedentários, 88% com consumo calórico frequente.
->
-> Se eu sou coordenador de endocrinologia ou de nutrição, eu não começo um programa genérico. Eu começo por atividade física e por redução de ultraprocessados, e eu treino a recepção a perguntar histórico familiar.
->
-> O painel está no mesmo endereço do diagnóstico. A equipe não troca de ferramenta.
+> Paciente de quarenta e dois anos, um metro e setenta, cento e vinte quilos. O sistema prediz obesidade tipo dois, com IMC de quarenta e um e meio. A OMS, só pelo IMC, apontaria tipo três. O gráfico mostra a confiança em cada nível.
 
 ---
 
-## Bloco 6 — Impacto, próximos passos e fechamento (5:50 a 6:30)
+## Slide 6 — Como a equipe lê o resultado
 
-**Tela:** slides 11–13. No final, mostre a URL na barra do navegador.
+**Tela:** classe predita, IMC/OMS, confiança, limite clínico.
 
-**Fale:**
+> O médico lê três coisas: a classe predita, o IMC com a faixa da OMS e a probabilidade. Quando as duas leituras divergem, vale revisar o contexto comportamental. Continua sendo apoio à triagem.
 
-> Na prática, isso encurta a primeira conversa no ambulatório, padroniza a classificação em sete níveis e gera insumo para campanha interna.
->
-> Próximos passos, se o hospital adotar: validar o modelo em pacientes reais da unidade, calibrar por faixa etária e, no extra de produção, integrar a API FastAPI ao prontuário — o Docker já empacota API e tela juntas.
->
-> O aplicativo em produção está em avaliapeso ponto streamlit ponto app. O código-fonte está no GitHub, repositório fase4-postech, branch main.
->
-> Obrigado. Fico à disposição da banca.
+---
+
+## Slide 7 — Painel analítico (gestão)
+
+**Tela:** captura dos KPIs (2.111 pacientes; 81,8%; 59%; 88,4%).
+
+> A segunda visão é o painel da gestão. São dois mil cento e onze pacientes. Oitenta e dois por cento com histórico familiar, cinquenta e nove por cento sedentários, oitenta e oito por cento com consumo calórico frequente. Diagnóstico e painel no mesmo endereço.
+
+---
+
+## Slide 8 — Hábitos que mudam a conduta
+
+**Tela:** captura dos gráficos de atividade física, água, calorias e IMC.
+
+> Três achados. Histórico familiar se concentra nos níveis graves. Atividade física cai quando a obesidade sobe. Alimento calórico é o hábito dominante. O IMC separa os níveis; os hábitos dizem por onde intervir.
+
+---
+
+## Slide 9 — Pipeline de machine learning
+
+**Tela:** dados → IMC → preparação → modelos.
+
+> A pipeline padroniza números, transforma categorias e calcula o IMC como métrica de apoio. Comparamos Random Forest e Gradient Boosting. O mesmo pré-processamento segue até a aplicação.
+
+---
+
+## Slide 10 — Assertividade do modelo
+
+**Tela:** 75% exigido versus 98,35% no teste.
+
+> O critério da disciplina era setenta e cinco por cento. O Gradient Boosting chegou a noventa e oito vírgula trinta e cinco no teste. O Random Forest, noventa e sete vírgula oitenta e sete. O campeão foi serializado e é este que o aplicativo usa.
+
+---
+
+## Slide 11 — Produção e extras
+
+**Tela:** Streamlit Cloud, GitHub, FastAPI + Docker (extra).
+
+> O deploy oficial é o Streamlit Cloud: avaliapeso ponto streamlit ponto app. O código está no GitHub, branch main. Como extra de produção, o mesmo modelo sobe em API FastAPI e em Docker, junto com a tela.
+
+---
+
+## Slide 12 — Impacto e encerramento
+
+**Tela:** triagem, prevenção, próximos passos.
+
+> Na prática, a primeira triagem fica mais curta e padronizada. O painel alimenta prevenção. Obrigado. Fico à disposição da banca.
 
 ---
 
 ## Se faltar tempo (corte nesta ordem)
 
-1. Extra FastAPI/Docker no bloco 3  
-2. “Próximos passos” no bloco 6  
-3. Um dos três insights do bloco 2 (fique com família + FAF)
-
-## Se sobrar tempo (até 8–9 min)
-
-- Mostre http://localhost:8000/docs **só se já estiver aberto** (Swagger `/predict`). Uma frase: “o mesmo modelo também responde em API, para integrar com outro sistema.”  
-- Não instale Docker ao vivo.
+1. Frase do extra FastAPI/Docker no slide 11  
+2. “Próximo passo no hospital” no slide 12  
+3. Um dos três achados no slide 8 (fique com família + atividade física)
 
 ## Checklist na hora de gravar
 
-- [ ] Duas abas: Diagnóstico **e** Painel  
-- [ ] Paciente de 120 kg / 1,70 m preenchido na gravação (não só narrado)  
+- [ ] Só o PDF em tela cheia — sem abrir o app  
+- [ ] Ler a faixa de texto de cada slide (ou este roteiro; o texto é o mesmo)  
 - [ ] Falar “apoio à decisão”, nunca “o app diagnostica sozinho”  
 - [ ] Dizer 98,35% e o mínimo de 75%  
 - [ ] Dizer 2.111 pacientes  
-- [ ] Mostrar a URL `avaliapeso.streamlit.app`  
+- [ ] Dizer a URL `avaliapeso.streamlit.app` (slides 7 e 11)  
+- [ ] No exemplo, falar **obesidade tipo II** (não tipo III — a OMS pelo IMC é que aponta tipo III)  
 - [ ] Duração entre 4 e 10 minutos (alvo 6)  
 - [ ] Sem música alta; microfone perto da boca  
 

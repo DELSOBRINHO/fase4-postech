@@ -13,6 +13,8 @@
 3. Main file path: `app/app.py`.
 4. Deploy.
 
+**URL em produção:** [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/)
+
 A aplicação resolve dados e modelo a partir da raiz do repositório:
 
 - `data/Obesity.csv`
@@ -36,12 +38,12 @@ Abrir `http://localhost:8501` e percorrer:
 
 ## Depois do ar no ar
 
-Atualizar `entrega_tech_challenge_fase4.txt`:
+`entrega_tech_challenge_fase4.txt` já contém:
 
-- URL do app
-- A mesma URL como link do painel (aba *Painel analítico e insights*)
-- URL do GitHub
-- URL do vídeo
+- App: https://avaliapeso.streamlit.app/
+- Painel: a mesma URL, aba *Painel analítico e insights*
+- GitHub: https://github.com/DELSOBRINHO/fase4-postech
+- Vídeo: ainda pendente
 
 ## Problemas comuns
 

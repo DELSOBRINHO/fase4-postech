@@ -143,14 +143,15 @@ Fase 6  Deploy Streamlit Cloud  →  vídeo  →  upload na plataforma
 
 ## Fase 6 — Deploy, vídeo e submissão (pós-código)
 
-Estes itens dependem de conta Streamlit/YouTube e da gravação — ficam abertos até a entrega na plataforma FIAP.
+Itens de Cloud já publicados; vídeo e upload na plataforma FIAP ainda abertos.
 
-- [ ] Criar repositório público (ou garantir visibilidade exigida pela disciplina)
-- [ ] Publicar o app no Streamlit Cloud (`app/app.py` + `requirements.txt` da raiz)
-- [ ] Validar diagnóstico e painel na URL de produção
-- [ ] Colar os quatro links em `entrega_tech_challenge_fase4.txt`
+- [x] Criar repositório público (ou garantir visibilidade exigida pela disciplina)
+- [x] Publicar o app no Streamlit Cloud (`app/app.py` + `requirements.txt` da raiz)
+- [x] Validar diagnóstico e painel na URL de produção (`https://avaliapeso.streamlit.app/`)
+- [x] Colar links da aplicação, do painel e do GitHub em `entrega_tech_challenge_fase4.txt`
 - [ ] Gravar vídeo de 4–10 min seguindo o roteiro
 - [ ] Publicar o vídeo (YouTube ou Loom) em modo acessível ao avaliador
+- [ ] Colar o link do vídeo em `entrega_tech_challenge_fase4.txt`
 - [ ] Fazer upload do `.txt` (ou `.doc`) na plataforma da FIAP
 
 **Aceite da fase:** os quatro links abrem sem autenticação extra para o avaliador.
@@ -201,3 +202,4 @@ O projeto está pronto para a banca quando **todos** os itens abaixo forem verda
 | Data | Entrega |
 | --- | --- |
 | 2026-08-26 | Estrutura do repositório, documentação, pipeline, app, notebooks e treino inicial |
+| 2026-08-26 | Deploy em produção: https://avaliapeso.streamlit.app/ (diagnóstico e painel validados) |

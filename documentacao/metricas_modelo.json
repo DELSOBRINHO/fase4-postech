@@ -1,0 +1,285 @@
+{
+  "n_rows": 2111,
+  "n_features": 17,
+  "test_size": 0.2,
+  "random_state": 42,
+  "min_accuracy_required": 0.75,
+  "champion": "gradient_boosting",
+  "champion_test_accuracy": 0.983451536643026,
+  "models": [
+    {
+      "name": "gradient_boosting",
+      "test_accuracy": 0.983451536643026,
+      "cv_accuracy_mean": 0.9751215914877178,
+      "cv_accuracy_std": 0.008283470997992608,
+      "classification_report": {
+        "Insufficient_Weight": {
+          "precision": 1.0,
+          "recall": 0.9814814814814815,
+          "f1-score": 0.9906542056074766,
+          "support": 54.0
+        },
+        "Normal_Weight": {
+          "precision": 0.9508196721311475,
+          "recall": 1.0,
+          "f1-score": 0.9747899159663865,
+          "support": 58.0
+        },
+        "Obesity_Type_I": {
+          "precision": 0.9859154929577465,
+          "recall": 1.0,
+          "f1-score": 0.9929078014184397,
+          "support": 70.0
+        },
+        "Obesity_Type_II": {
+          "precision": 0.9836065573770492,
+          "recall": 1.0,
+          "f1-score": 0.9917355371900827,
+          "support": 60.0
+        },
+        "Obesity_Type_III": {
+          "precision": 1.0,
+          "recall": 0.9846153846153847,
+          "f1-score": 0.9922480620155039,
+          "support": 65.0
+        },
+        "Overweight_Level_I": {
+          "precision": 0.9821428571428571,
+          "recall": 0.9482758620689655,
+          "f1-score": 0.9649122807017544,
+          "support": 58.0
+        },
+        "Overweight_Level_II": {
+          "precision": 0.9824561403508771,
+          "recall": 0.9655172413793104,
+          "f1-score": 0.9739130434782609,
+          "support": 58.0
+        },
+        "accuracy": 0.983451536643026,
+        "macro avg": {
+          "precision": 0.9835629599942397,
+          "recall": 0.9828414242207345,
+          "f1-score": 0.9830229780539863,
+          "support": 423.0
+        },
+        "weighted avg": {
+          "precision": 0.9837464794040387,
+          "recall": 0.983451536643026,
+          "f1-score": 0.9834250907635899,
+          "support": 423.0
+        }
+      },
+      "confusion_matrix_labels": [
+        "Insufficient_Weight",
+        "Normal_Weight",
+        "Obesity_Type_I",
+        "Obesity_Type_II",
+        "Obesity_Type_III",
+        "Overweight_Level_I",
+        "Overweight_Level_II"
+      ],
+      "confusion_matrix": [
+        [
+          53,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          58,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          70,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          60,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          64,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          0,
+          0,
+          55,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          56
+        ]
+      ]
+    },
+    {
+      "name": "random_forest",
+      "test_accuracy": 0.9787234042553191,
+      "cv_accuracy_mean": 0.9828226783488139,
+      "cv_accuracy_std": 0.007821287713939935,
+      "classification_report": {
+        "Insufficient_Weight": {
+          "precision": 1.0,
+          "recall": 0.9814814814814815,
+          "f1-score": 0.9906542056074766,
+          "support": 54.0
+        },
+        "Normal_Weight": {
+          "precision": 0.9047619047619048,
+          "recall": 0.9827586206896551,
+          "f1-score": 0.9421487603305785,
+          "support": 58.0
+        },
+        "Obesity_Type_I": {
+          "precision": 0.9859154929577465,
+          "recall": 1.0,
+          "f1-score": 0.9929078014184397,
+          "support": 70.0
+        },
+        "Obesity_Type_II": {
+          "precision": 0.9833333333333333,
+          "recall": 0.9833333333333333,
+          "f1-score": 0.9833333333333333,
+          "support": 60.0
+        },
+        "Obesity_Type_III": {
+          "precision": 1.0,
+          "recall": 0.9846153846153847,
+          "f1-score": 0.9922480620155039,
+          "support": 65.0
+        },
+        "Overweight_Level_I": {
+          "precision": 0.9814814814814815,
+          "recall": 0.9137931034482759,
+          "f1-score": 0.9464285714285714,
+          "support": 58.0
+        },
+        "Overweight_Level_II": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 58.0
+        },
+        "accuracy": 0.9787234042553191,
+        "macro avg": {
+          "precision": 0.9793560303620666,
+          "recall": 0.9779974176525901,
+          "f1-score": 0.9782458191619862,
+          "support": 423.0
+        },
+        "weighted avg": {
+          "precision": 0.9797073307545122,
+          "recall": 0.9787234042553191,
+          "f1-score": 0.9788001949766737,
+          "support": 423.0
+        }
+      },
+      "confusion_matrix_labels": [
+        "Insufficient_Weight",
+        "Normal_Weight",
+        "Obesity_Type_I",
+        "Obesity_Type_II",
+        "Obesity_Type_III",
+        "Overweight_Level_I",
+        "Overweight_Level_II"
+      ],
+      "confusion_matrix": [
+        [
+          53,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          57,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          70,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          59,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          64,
+          0,
+          0
+        ],
+        [
+          0,
+          5,
+          0,
+          0,
+          0,
+          53,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          58
+        ]
+      ]
+    }
+  ]
+}

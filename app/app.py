@@ -176,7 +176,7 @@ def render_diagnosis(model) -> None:
             color_continuous_scale="Teal",
         )
         fig_prob.update_layout(yaxis_title="", xaxis_title="Probabilidade (%)")
-        st.plotly_chart(fig_prob, use_container_width=True)
+        st.plotly_chart(fig_prob, width="stretch")
 
 
 def feature_importance_frame(model, df: pd.DataFrame) -> pd.DataFrame | None:
@@ -223,7 +223,7 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
             color="Obesity_PT",
         )
         fig_dist.update_layout(xaxis_title="", yaxis_title="Pacientes", showlegend=False)
-        st.plotly_chart(fig_dist, use_container_width=True)
+        st.plotly_chart(fig_dist, width="stretch")
     with g2:
         fig_fam = px.histogram(
             df,
@@ -234,7 +234,7 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
             labels={"family_history": "Histórico familiar"},
         )
         fig_fam.update_layout(xaxis_title="", yaxis_title="Pacientes")
-        st.plotly_chart(fig_fam, use_container_width=True)
+        st.plotly_chart(fig_fam, width="stretch")
 
     g3, g4 = st.columns(2)
     with g3:
@@ -246,7 +246,7 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
             title="Frequência de atividade física (FAF) por nível",
         )
         fig_act.update_layout(xaxis_title="", showlegend=False)
-        st.plotly_chart(fig_act, use_container_width=True)
+        st.plotly_chart(fig_act, width="stretch")
     with g4:
         fig_water = px.box(
             df,
@@ -256,7 +256,7 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
             title="Consumo de água (CH2O) por nível",
         )
         fig_water.update_layout(xaxis_title="", showlegend=False)
-        st.plotly_chart(fig_water, use_container_width=True)
+        st.plotly_chart(fig_water, width="stretch")
 
     g5, g6 = st.columns(2)
     with g5:
@@ -269,7 +269,7 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
             labels={"FAVC": "FAVC"},
         )
         fig_favc.update_layout(xaxis_title="", yaxis_title="Pacientes")
-        st.plotly_chart(fig_favc, use_container_width=True)
+        st.plotly_chart(fig_favc, width="stretch")
     with g6:
         fig_imc = px.box(
             df,
@@ -279,7 +279,7 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
             title="IMC por nível de obesidade",
         )
         fig_imc.update_layout(xaxis_title="", showlegend=False)
-        st.plotly_chart(fig_imc, use_container_width=True)
+        st.plotly_chart(fig_imc, width="stretch")
 
     st.subheader("Correlações e importância das variáveis")
     c1, c2 = st.columns(2)
@@ -293,7 +293,7 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
             title="Matriz de correlação (variáveis numéricas)",
             aspect="auto",
         )
-        st.plotly_chart(fig_corr, use_container_width=True)
+        st.plotly_chart(fig_corr, width="stretch")
     with c2:
         imp = feature_importance_frame(model, df)
         if imp is None:
@@ -310,7 +310,7 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
                 color_continuous_scale="Teal",
             )
             fig_imp.update_layout(yaxis_title="", xaxis_title="Importância")
-            st.plotly_chart(fig_imp, use_container_width=True)
+            st.plotly_chart(fig_imp, width="stretch")
 
     st.markdown(
         """

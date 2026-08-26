@@ -33,7 +33,7 @@ Fase 6  Deploy Streamlit Cloud  →  vídeo  →  upload na plataforma
 - [x] Criar pasta `documentacao/`
 - [x] Versionar o plano mestre (`01-plano-mestre.md`)
 - [x] Versionar este plano de desenvolvimento com checklist
-- [x] Incluir enunciado, dicionário, roteiro de vídeo e guia de deploy
+- [x] Incluir enunciado, dicionário e guia de deploy
 - [x] Criar árvore `data/`, `notebooks/`, `src/`, `app/`
 - [x] Adicionar `.gitignore` e `requirements.txt` (raiz e `app/`)
 - [x] Definir branch de trabalho a partir de `main`
@@ -58,7 +58,7 @@ Fase 6  Deploy Streamlit Cloud  →  vídeo  →  upload na plataforma
 
 ## Fase 2 — Análise exploratória com visão médica
 
-**Objetivo:** gerar insights que alimentem o dashboard e o roteiro do vídeo.
+**Objetivo:** gerar insights que alimentem o dashboard analítico.
 
 - [x] Notebook `notebooks/01_eda_analise_medica.ipynb`
 - [x] Distribuição do alvo e leitura epidemiológica
@@ -133,7 +133,6 @@ Fase 6  Deploy Streamlit Cloud  →  vídeo  →  upload na plataforma
 
 - [x] `README.md` com problema, estrutura, como treinar e como rodar o app
 - [x] `entrega_tech_challenge_fase4.txt` com placeholders dos links
-- [x] Roteiro de vídeo (`05-roteiro-video.md`)
 - [x] Guia de deploy (`06-guia-deploy-streamlit.md`)
 - [x] Enunciado oficial e PDF do dicionário na pasta `documentacao/`
 
@@ -149,7 +148,7 @@ Itens de Cloud já publicados; vídeo e upload na plataforma FIAP ainda abertos.
 - [x] Publicar o app no Streamlit Cloud (`app/app.py` + `requirements.txt` da raiz)
 - [x] Validar diagnóstico e painel na URL de produção (`https://avaliapeso.streamlit.app/`)
 - [x] Colar links da aplicação, do painel e do GitHub em `entrega_tech_challenge_fase4.txt`
-- [ ] Gravar vídeo de 4–10 min seguindo o roteiro
+- [ ] Gravar vídeo de 4–10 min em visão de negócio (sistema e painel)
 - [ ] Publicar o vídeo (YouTube ou Loom) em modo acessível ao avaliador
 - [ ] Colar o link do vídeo em `entrega_tech_challenge_fase4.txt`
 - [ ] Fazer upload do `.txt` (ou `.doc`) na plataforma da FIAP
@@ -209,7 +208,7 @@ O projeto está pronto para a banca quando **todos** os itens abaixo forem verda
 | 4 | Painel analítico com insights médicos | Aba Painel em `app/app.py` |
 | 5 | Código no GitHub, estruturado | este repositório |
 | 6 | Deploy + painel + repo + vídeo em arquivo de entrega | `entrega_tech_challenge_fase4.txt` |
-| 7 | Vídeo 4–10 min com visão de negócio | `05-roteiro-video.md` + link publicado |
+| 7 | Vídeo 4–10 min com visão de negócio | link publicado em `entrega_tech_challenge_fase4.txt` |
 
 ---
 
@@ -222,7 +221,7 @@ O projeto está pronto para a banca quando **todos** os itens abaixo forem verda
 | Vazamento conceitual IMC × rótulo OMS | Banca questionar “o modelo só copia o IMC” | Exibir IMC como apoio clínico, incluir hábitos no modelo e discutir isso no vídeo |
 | Dependências divergentes entre treino e Cloud | Inferência inconsistente | Um `requirements.txt` na raiz; versões mínimas pinadas |
 | Imagem Docker pesada ou quebrada | Extra inutilizável | Instalar só `app/requirements.txt`; healthcheck em `/_stcore/health` |
-| Vídeo só técnico | Perde visão de negócio | Seguir o roteiro minuto a minuto |
+| Vídeo só técnico | Perde visão de negócio | Apresentar sistema e painel em visão de negócio |
 
 ---
 

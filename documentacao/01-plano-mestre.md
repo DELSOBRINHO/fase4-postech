@@ -16,7 +16,7 @@ O desafio oficial da Fase 4 consiste em atuar como cientista de dados hospitalar
 | **Painel analítico** | Insights para a equipe médica (fatores de risco, hábitos, correlações) | Aba analítica no Streamlit com gráficos interativos (Plotly) |
 | **Deploy da aplicação** | Aplicação web para diagnóstico interativo | Streamlit Cloud: [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/) + extra FastAPI/Docker para MLOps local |
 | **Repositório GitHub** | Código limpo e estruturado | Estrutura modular com `/data`, `/notebooks`, `/src`, `/app` e `/documentacao` |
-| **Vídeo de apresentação** | 4 a 10 minutos com foco em visão médica e de negócio | Roteiro estruturado cobrindo problema, dados, arquitetura e demo do app |
+| **Vídeo de apresentação** | 4 a 10 minutos com foco em visão médica e de negócio | Link no arquivo de entrega (`entrega_tech_challenge_fase4.txt`) |
 
 ---
 
@@ -107,15 +107,9 @@ Navegação em duas visões na barra lateral:
 
 ---
 
-## 5. Roteiro do vídeo de apresentação (5 a 7 minutos)
+## 5. Vídeo de apresentação (4 a 10 minutos)
 
-Ver `documentacao/05-roteiro-video.md`.
-
-- **Minuto 1:** problema de negócio (visão hospitalar)
-- **Minuto 2:** exploração de dados e insights clínicos
-- **Minuto 3:** engenharia de atributos e modelagem (pipeline + acurácia)
-- **Minutos 4–5:** demonstração do Streamlit (diagnóstico + painel)
-- **Minuto 6:** impacto no atendimento e conclusão
+Entrega em visão de negócio: problema hospitalar, sistema preditivo, painel analítico e impacto. O link publicado entra em `entrega_tech_challenge_fase4.txt`.
 
 ---
 

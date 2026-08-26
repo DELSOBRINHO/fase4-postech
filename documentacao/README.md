@@ -9,6 +9,7 @@
 | [03-enunciado-tech-challenge.md](03-enunciado-tech-challenge.md) | Enunciado oficial (transcrição) |
 | [04-dicionario-dados.md](04-dicionario-dados.md) | Dicionário clínico das colunas |
 | [05-roteiro-video.md](05-roteiro-video.md) | Roteiro do vídeo (4–10 min) |
+| [slides_apresentacao.pdf](slides_apresentacao.pdf) | Slides para gravar a apresentação |
 | [06-guia-deploy-streamlit.md](06-guia-deploy-streamlit.md) | Publicação no Streamlit Cloud |
 | [07-guia-docker.md](07-guia-docker.md) | Extra: Docker e Compose (API + frontend) |
 | [08-guia-fastapi.md](08-guia-fastapi.md) | Extra: API REST FastAPI |

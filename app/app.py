@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 import joblib
 import pandas as pd
 import plotly.express as px
+import requests
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -20,9 +22,11 @@ from src.data_pipeline import (  # noqa: E402
     add_clinical_features,
     classify_imc,
 )
+from src.inference import predict_patient  # noqa: E402
 
 MODEL_PATH = ROOT / "app" / "model.joblib"
 DATA_PATH = ROOT / "data" / "Obesity.csv"
+INFERENCE_API_URL = os.getenv("INFERENCE_API_URL", "").rstrip("/")
 
 st.set_page_config(
     page_title="Sistema de Diagnóstico de Obesidade",
@@ -118,34 +122,44 @@ def render_diagnosis(model) -> None:
         )
         return
 
-    input_data = pd.DataFrame(
-        [
-            {
-                "Gender": GENDER_OPTIONS[gender_label],
-                "Age": float(age),
-                "Height": float(height),
-                "Weight": float(weight),
-                "family_history": YES_NO[family_label],
-                "FAVC": YES_NO[favc_label],
-                "FCVC": float(fcvc),
-                "NCP": float(ncp),
-                "CAEC": CAEC_OPTIONS[caec_label],
-                "SMOKE": YES_NO[smoke_label],
-                "CH2O": float(ch2o),
-                "SCC": YES_NO[scc_label],
-                "FAF": float(faf),
-                "TUE": float(tue),
-                "CALC": CALC_OPTIONS[calc_label],
-                "MTRANS": MTRANS_OPTIONS[mtrans_label],
-            }
-        ]
-    )
-    input_data = add_clinical_features(input_data)
-    prediction = model.predict(input_data)[0]
-    probabilities = model.predict_proba(input_data)[0]
-    classes = list(model.classes_)
-    imc = float(input_data["IMC"].iloc[0])
-    label_pt = LABEL_PT.get(prediction, prediction.replace("_", " "))
+    payload = {
+        "Gender": GENDER_OPTIONS[gender_label],
+        "Age": float(age),
+        "Height": float(height),
+        "Weight": float(weight),
+        "family_history": YES_NO[family_label],
+        "FAVC": YES_NO[favc_label],
+        "FCVC": float(fcvc),
+        "NCP": float(ncp),
+        "CAEC": CAEC_OPTIONS[caec_label],
+        "SMOKE": YES_NO[smoke_label],
+        "CH2O": float(ch2o),
+        "SCC": YES_NO[scc_label],
+        "FAF": float(faf),
+        "TUE": float(tue),
+        "CALC": CALC_OPTIONS[calc_label],
+        "MTRANS": MTRANS_OPTIONS[mtrans_label],
+    }
+    try:
+        if INFERENCE_API_URL:
+            response = requests.post(
+                f"{INFERENCE_API_URL}/predict",
+                json=payload,
+                timeout=20,
+            )
+            response.raise_for_status()
+            result = response.json()
+        else:
+            result = predict_patient(payload, model=model)
+    except Exception as exc:  # noqa: BLE001
+        st.error(f"Falha na inferência: {exc}")
+        return
+
+    prediction = result["prediction"]
+    probabilities = [result["probabilities"][c] for c in result["classes"]]
+    classes = result["classes"]
+    imc = float(result["imc"])
+    label_pt = result.get("prediction_pt") or LABEL_PT.get(prediction, prediction.replace("_", " "))
 
     left, right = st.columns([1, 1])
     with left:
@@ -163,7 +177,7 @@ def render_diagnosis(model) -> None:
         prob_df = pd.DataFrame(
             {
                 "Classe": [LABEL_PT.get(c, c) for c in classes],
-                "Probabilidade (%)": probabilities * 100,
+                "Probabilidade (%)": [float(p) * 100 for p in probabilities],
             }
         ).sort_values("Probabilidade (%)", ascending=True)
         fig_prob = px.bar(
@@ -333,9 +347,15 @@ def main() -> None:
         ["Diagnóstico preditivo", "Painel analítico e insights"],
     )
     st.sidebar.markdown("---")
+    inference_mode = (
+        f"Inferência via API FastAPI (`{INFERENCE_API_URL}`)"
+        if INFERENCE_API_URL
+        else "Inferência local (modelo serializado)"
+    )
     st.sidebar.caption(
         "Tech Challenge Fase 4 — POSTECH FIAP  \n"
-        "Ferramenta de apoio à triagem hospitalar."
+        "Ferramenta de apoio à triagem hospitalar.  \n"
+        f"{inference_mode}"
     )
 
     if page == "Diagnóstico preditivo":

@@ -1,7 +1,7 @@
 ======================================================================
 FIAP POSTECH - TECH CHALLENGE FASE 4: DATA VIZ & PRODUCTION MODELS
 TEMA: SISTEMA PREDITIVO HOSPITALAR DE DIAGNÓSTICO DE OBESIDADE
-ESTUDANTE: [Seu Nome Completo]
+ESTUDANTE: DELMIR BARTOLOMEU SOBRINHO
 ======================================================================
 
 1. LINK DA APLICAÇÃO EM PRODUÇÃO (STREAMLIT):
@@ -22,5 +22,6 @@ RESUMO DOS RESULTADOS:
 - Acurácia do Modelo no Teste: 98,35% (Gradient Boosting; Random Forest 97,87%; mínimo exigido: 75%)
 - Algoritmo: Gradient Boosting Classifier com Pipeline de pré-processamento (StandardScaler + OneHotEncoder + IMC)
 
-- Interface: Streamlit com diagnóstico individual e métricas populacionais
+- Interface: Streamlit Cloud com diagnóstico individual e métricas populacionais
+- Extra MLOps: API REST FastAPI (`/predict`) + frontend Streamlit no Docker Compose
 ======================================================================

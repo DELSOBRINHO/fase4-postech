@@ -13,7 +13,7 @@ Este repositório entrega:
 1. Pipeline Scikit-Learn (`ColumnTransformer` + `Pipeline`) com IMC como atributo clínico.
 2. Modelo serializado (**Gradient Boosting**, acurácia de teste **98,35%**; Random Forest 97,87%).
 3. App Streamlit com diagnóstico individual e dashboard epidemiológico, em produção em [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/).
-4. Extra opcional: `Dockerfile` + `docker-compose.yml` para subir o mesmo app em container.
+4. Extra opcional: FastAPI (`/predict`) + Docker Compose unindo API e frontend Streamlit.
 5. Documentação de produto em [`documentacao/`](documentacao/01-plano-mestre.md).
 
 ## Estrutura
@@ -24,10 +24,12 @@ notebooks/01_eda_analise_medica.ipynb
 notebooks/02_pipeline_modelagem.ipynb
 src/data_pipeline.py
 src/train.py
+src/inference.py
+api/main.py                 # extra: API REST
 app/app.py
 app/model.joblib
 documentacao/          # plano mestre, checklist, dicionário, roteiro, deploy
-Dockerfile             # extra: imagem do app
+Dockerfile             # extra: imagem (API + frontend)
 docker-compose.yml
 entrega_tech_challenge_fase4.txt
 ```
@@ -44,15 +46,24 @@ streamlit run app/app.py
 
 O treino grava `app/model.joblib` e `documentacao/metricas_modelo.json`.
 
-## Extra: Docker
+## Extra: Docker + FastAPI
 
-O deploy da disciplina é o Streamlit Cloud. Para empacotar o mesmo app localmente:
+O deploy da disciplina é o Streamlit Cloud. Para empacotar **API REST + frontend**:
 
 ```bash
 docker compose up --build
 ```
 
-Detalhes em [`documentacao/07-guia-docker.md`](documentacao/07-guia-docker.md).
+- App: http://localhost:8501
+- API (Swagger): http://localhost:8000/docs
+
+API isolada, sem Docker:
+
+```bash
+uvicorn api.main:app --reload --port 8000
+```
+
+Guias: [`07-guia-docker.md`](documentacao/07-guia-docker.md) e [`08-guia-fastapi.md`](documentacao/08-guia-fastapi.md).
 
 ## Dados
 
@@ -68,7 +79,8 @@ Base `Obesity.csv` (2.111 pacientes, 17 colunas, alvo `Obesity` com 7 classes). 
 | [Dicionário](documentacao/04-dicionario-dados.md) | Variáveis clínicas |
 | [Roteiro do vídeo](documentacao/05-roteiro-video.md) | 5–7 minutos, visão de negócio |
 | [Deploy Streamlit](documentacao/06-guia-deploy-streamlit.md) | Publicação no Cloud |
-| [Docker (extra)](documentacao/07-guia-docker.md) | Container local com Compose |
+| [Docker (extra)](documentacao/07-guia-docker.md) | Container local: API + Streamlit |
+| [FastAPI (extra)](documentacao/08-guia-fastapi.md) | API REST de inferência |
 
 ## Produção
 

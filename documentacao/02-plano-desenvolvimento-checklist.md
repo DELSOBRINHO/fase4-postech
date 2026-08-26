@@ -172,6 +172,20 @@ Não faz parte da rubrica oficial. Empacota o mesmo app para rodada local reprod
 
 ---
 
+## Extra — API FastAPI (opcional)
+
+Não faz parte da rubrica oficial. Serve o modelo em REST e, no Compose, o Streamlit consome `/predict`.
+
+- [x] `api/main.py` com `/health`, `/classes` e `/predict`
+- [x] `src/inference.py` compartilhado entre API e app
+- [x] Compose com serviços `api` (8000) e `avaliapeso` (8501)
+- [x] Streamlit Cloud permanece em inferência local (sem `INFERENCE_API_URL`)
+- [x] Guia `documentacao/08-guia-fastapi.md`
+
+**Aceite do extra:** `POST /predict` devolve classe + IMC; o frontend em Docker indica inferência via API.
+
+---
+
 ## Ordem de execução recomendada (código)
 
 1. Congelar dados e dicionário.
@@ -219,3 +233,4 @@ O projeto está pronto para a banca quando **todos** os itens abaixo forem verda
 | 2026-08-26 | Estrutura do repositório, documentação, pipeline, app, notebooks e treino inicial |
 | 2026-08-26 | Deploy em produção: https://avaliapeso.streamlit.app/ (diagnóstico e painel validados) |
 | 2026-08-26 | Extra Docker/Compose para empacotar o app (opcional; Cloud permanece o deploy oficial) |
+| 2026-08-26 | Extra FastAPI `/predict` unida ao frontend no Compose; nome do estudante no arquivo de entrega |

@@ -14,7 +14,7 @@ Este repositório entrega:
 2. Modelo serializado (**Gradient Boosting**, acurácia de teste **98,35%**; Random Forest 97,87%).
 3. App Streamlit com diagnóstico individual e dashboard epidemiológico, em produção em [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/).
 4. Extra opcional: FastAPI (`/predict`) + Docker Compose unindo API e frontend Streamlit.
-5. Documentação de produto em [`documentacao/`](documentacao/).
+5. Documentação de produto em [`documentacao/`](documentacao/01-plano-mestre.md).
 
 ## Estrutura
 
@@ -28,7 +28,7 @@ src/inference.py
 api/main.py                 # extra: API REST
 app/app.py
 app/model.joblib
-documentacao/          # dicionário, roteiro, slides, deploy
+documentacao/          # plano mestre, checklist, dicionário, roteiro, deploy
 Dockerfile             # extra: imagem (API + frontend)
 docker-compose.yml
 entrega_tech_challenge_fase4.txt
@@ -73,6 +73,9 @@ Base `Obesity.csv` (2.111 pacientes, 17 colunas, alvo `Obesity` com 7 classes). 
 
 | Documento | Conteúdo |
 | --- | --- |
+| [Plano mestre](documentacao/01-plano-mestre.md) | Requisitos, arquitetura e entregáveis |
+| [Plano de desenvolvimento](documentacao/02-plano-desenvolvimento-checklist.md) | Checklist por fase |
+| [Enunciado](documentacao/03-enunciado-tech-challenge.md) | Texto oficial do desafio |
 | [Dicionário](documentacao/04-dicionario-dados.md) | Variáveis clínicas |
 | [Roteiro do vídeo](documentacao/05-roteiro-video.md) | Um texto por slide (4–10 min); lê com o PDF em tela cheia |
 | [Slides](documentacao/slides_apresentacao.pdf) | PDF da apresentação (o que aparece no vídeo) |

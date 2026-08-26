@@ -12,7 +12,7 @@ Este repositório entrega:
 
 1. Pipeline Scikit-Learn (`ColumnTransformer` + `Pipeline`) com IMC como atributo clínico.
 2. Modelo serializado (**Gradient Boosting**, acurácia de teste **98,35%**; Random Forest 97,87%).
-3. App Streamlit com diagnóstico individual e dashboard epidemiológico.
+3. App Streamlit com diagnóstico individual e dashboard epidemiológico, em produção em [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/).
 4. Documentação de produto em [`documentacao/`](documentacao/01-plano-mestre.md).
 
 ## Estrutura
@@ -56,6 +56,8 @@ Base `Obesity.csv` (2.111 pacientes, 17 colunas, alvo `Obesity` com 7 classes). 
 | [Roteiro do vídeo](documentacao/05-roteiro-video.md) | 5–7 minutos, visão de negócio |
 | [Deploy Streamlit](documentacao/06-guia-deploy-streamlit.md) | Publicação no Cloud |
 
-## Submissão
+## Produção
 
-Preencha os quatro links em [`entrega_tech_challenge_fase4.txt`](entrega_tech_challenge_fase4.txt) após o deploy e a publicação do vídeo.
+Aplicação e painel analítico: [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/)
+
+O arquivo de submissão da disciplina está em [`entrega_tech_challenge_fase4.txt`](entrega_tech_challenge_fase4.txt). Falta apenas o link do vídeo de apresentação.

@@ -157,6 +157,20 @@ Estes itens dependem de conta Streamlit/YouTube e da gravação — ficam aberto
 
 ---
 
+## Extra — Docker e Compose (opcional)
+
+Não faz parte da rubrica oficial. Empacota o mesmo app para rodada local reproduzível, sem substituir o Streamlit Cloud.
+
+- [x] `Dockerfile` (Python 3.12-slim, healthcheck na porta 8501)
+- [x] `docker-compose.yml` mapeando `8501:8501`
+- [x] `.dockerignore` (sem notebooks, docs e `.git` na imagem)
+- [x] Guia `documentacao/07-guia-docker.md`
+- [x] Instruções no `README.md`
+
+**Aceite do extra:** `docker compose up --build` abre o diagnóstico e o painel em http://localhost:8501.
+
+---
+
 ## Ordem de execução recomendada (código)
 
 1. Congelar dados e dicionário.
@@ -192,6 +206,7 @@ O projeto está pronto para a banca quando **todos** os itens abaixo forem verda
 | Classe customizada no pickle | `joblib.load` falha | Pipeline só com estimadores sklearn; IMC adicionado *antes* do `Pipeline` |
 | Vazamento conceitual IMC × rótulo OMS | Banca questionar “o modelo só copia o IMC” | Exibir IMC como apoio clínico, incluir hábitos no modelo e discutir isso no vídeo |
 | Dependências divergentes entre treino e Cloud | Inferência inconsistente | Um `requirements.txt` na raiz; versões mínimas pinadas |
+| Imagem Docker pesada ou quebrada | Extra inutilizável | Instalar só `app/requirements.txt`; healthcheck em `/_stcore/health` |
 | Vídeo só técnico | Perde visão de negócio | Seguir o roteiro minuto a minuto |
 
 ---
@@ -201,3 +216,4 @@ O projeto está pronto para a banca quando **todos** os itens abaixo forem verda
 | Data | Entrega |
 | --- | --- |
 | 2026-08-26 | Estrutura do repositório, documentação, pipeline, app, notebooks e treino inicial |
+| 2026-08-26 | Extra Docker/Compose para empacotar o app (opcional; Cloud permanece o deploy oficial) |

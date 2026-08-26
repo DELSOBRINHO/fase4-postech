@@ -14,7 +14,7 @@ O desafio oficial da Fase 4 consiste em atuar como cientista de dados hospitalar
 | **Pipeline de Machine Learning** | Feature engineering, pré-processamento e treino estruturado | `ColumnTransformer` + `Pipeline` (Scikit-Learn) tratando dados numéricos e categóricos, com IMC como atributo clínico |
 | **Assertividade do modelo** | Acurácia mínima de **75%** no conjunto de teste | Random Forest / Gradient Boosting, com meta de **>94%** no hold-out estratificado |
 | **Painel analítico** | Insights para a equipe médica (fatores de risco, hábitos, correlações) | Aba analítica no Streamlit com gráficos interativos (Plotly) |
-| **Deploy da aplicação** | Aplicação web para diagnóstico interativo | Streamlit Cloud: [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/) |
+| **Deploy da aplicação** | Aplicação web para diagnóstico interativo | Streamlit Cloud: [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/) + extra Docker/Compose para rodada local |
 | **Repositório GitHub** | Código limpo e estruturado | Estrutura modular com `/data`, `/notebooks`, `/src`, `/app` e `/documentacao` |
 | **Vídeo de apresentação** | 4 a 10 minutos com foco em visão médica e de negócio | Roteiro estruturado cobrindo problema, dados, arquitetura e demo do app |
 
@@ -40,6 +40,8 @@ fase4-postech/
 │   ├── 01-plano-mestre.md
 │   ├── 02-plano-desenvolvimento-checklist.md
 │   └── ...                        # Demais documentos do app
+├── Dockerfile                     # Extra: imagem do app Streamlit
+├── docker-compose.yml
 ├── README.md
 ├── requirements.txt
 └── entrega_tech_challenge_fase4.txt
@@ -120,7 +122,7 @@ Ver `documentacao/05-roteiro-video.md`.
 O template oficial está em `entrega_tech_challenge_fase4.txt` (raiz do repositório). Deve conter:
 
 1. Link da aplicação em produção (Streamlit): https://avaliapeso.streamlit.app/
-2. Link do repositório GitHub: https://github.com/DELSOBRINHO/fase4-postech
+2. Link do repositório GitHub: https://github.com/DELSOBRINHO/fase4-postech/tree/main
 3. Link do painel analítico (aba da mesma aplicação): https://avaliapeso.streamlit.app/
 4. Link do vídeo (YouTube / Loom) — ainda pendente
 

@@ -10,6 +10,7 @@
 | [04-dicionario-dados.md](04-dicionario-dados.md) | Dicionário clínico das colunas |
 | [05-roteiro-video.md](05-roteiro-video.md) | Roteiro do vídeo (4–10 min) |
 | [06-guia-deploy-streamlit.md](06-guia-deploy-streamlit.md) | Publicação no Streamlit Cloud |
+| [07-guia-docker.md](07-guia-docker.md) | Extra: Docker e Compose (opcional) |
 | [metricas_modelo.md](metricas_modelo.md) | Resumo da acurácia do último treino |
 | [metricas_modelo.json](metricas_modelo.json) | Métricas detalhadas (gerado por `python -m src.train`) |
 | [enunciado_tech_challenge_fase4.pdf](enunciado_tech_challenge_fase4.pdf) | PDF oficial do desafio |

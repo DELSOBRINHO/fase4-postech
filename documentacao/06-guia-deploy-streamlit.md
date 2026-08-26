@@ -42,7 +42,7 @@ Abrir `http://localhost:8501` e percorrer:
 
 - App: https://avaliapeso.streamlit.app/
 - Painel: a mesma URL, aba *Painel analítico e insights*
-- GitHub: https://github.com/DELSOBRINHO/fase4-postech
+- GitHub: https://github.com/DELSOBRINHO/fase4-postech/tree/main
 - Vídeo: ainda pendente
 
 ## Problemas comuns
@@ -53,3 +53,7 @@ Abrir `http://localhost:8501` e percorrer:
 | App abre em branco / erro de import `src` | `sys.path` sem a raiz | Já tratado em `app/app.py` |
 | `ModuleNotFoundError: sklearn` | `requirements.txt` ausente na raiz | Usar o arquivo da raiz no Cloud |
 | Gráficos lentos | Dataset inteiro em cada rerun | `st.cache_data` já aplicado em `load_data` |
+
+## Extra: Docker
+
+Para rodar o mesmo app em container (opcional, não substitui o Cloud), ver [`07-guia-docker.md`](07-guia-docker.md).

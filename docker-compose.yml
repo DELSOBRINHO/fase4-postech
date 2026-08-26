@@ -1,0 +1,14 @@
+# Extra local: sobe o mesmo app do Streamlit Cloud em container.
+# Deploy oficial da disciplina continua em https://avaliapeso.streamlit.app/
+
+services:
+  avaliapeso:
+    build: .
+    image: avaliapeso:local
+    container_name: avaliapeso
+    ports:
+      - "8501:8501"
+    restart: unless-stopped
+    environment:
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
+      STREAMLIT_SERVER_HEADLESS: "true"

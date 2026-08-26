@@ -16,3 +16,5 @@
 | [dicionario_obesity_fiap.pdf](dicionario_obesity_fiap.pdf) | PDF do dicionário fornecido pela disciplina |
 
 O arquivo de submissão (links para a plataforma FIAP) fica na raiz: `entrega_tech_challenge_fase4.txt`.
+
+Aplicação em produção: [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/).

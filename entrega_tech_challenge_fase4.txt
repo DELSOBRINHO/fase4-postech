@@ -1,0 +1,26 @@
+======================================================================
+FIAP POSTECH - TECH CHALLENGE FASE 4: DATA VIZ & PRODUCTION MODELS
+TEMA: SISTEMA PREDITIVO HOSPITALAR DE DIAGNÓSTICO DE OBESIDADE
+ESTUDANTE: [Seu Nome Completo]
+======================================================================
+
+1. LINK DA APLICAÇÃO EM PRODUÇÃO (STREAMLIT):
+https://[seu-usuario]-tech-challenge-fase4-obesity.streamlit.app/
+
+2. LINK DO REPOSITÓRIO GITHUB (CÓDIGO-FONTE & PIPELINE):
+https://github.com/DELSOBRINHO/fase4-postech
+
+3. LINK DO PAINEL ANALÍTICO:
+Disponível na aba "Painel analítico e insights" integrada na própria aplicação Streamlit:
+https://[seu-usuario]-tech-challenge-fase4-obesity.streamlit.app/
+
+4. LINK DO VÍDEO DE APRESENTAÇÃO (YOUTUBE / LOOM):
+https://www.loom.com/share/[seu-link-de-video]
+
+======================================================================
+RESUMO DOS RESULTADOS:
+- Acurácia do Modelo no Teste: 98,35% (Gradient Boosting; Random Forest 97,87%; mínimo exigido: 75%)
+- Algoritmo: Gradient Boosting Classifier com Pipeline de pré-processamento (StandardScaler + OneHotEncoder + IMC)
+
+- Interface: Streamlit com diagnóstico individual e métricas populacionais
+======================================================================

@@ -14,7 +14,7 @@ O desafio oficial da Fase 4 consiste em atuar como cientista de dados hospitalar
 | **Pipeline de Machine Learning** | Feature engineering, pré-processamento e treino estruturado | `ColumnTransformer` + `Pipeline` (Scikit-Learn) tratando dados numéricos e categóricos, com IMC como atributo clínico |
 | **Assertividade do modelo** | Acurácia mínima de **75%** no conjunto de teste | Random Forest / Gradient Boosting, com meta de **>94%** no hold-out estratificado |
 | **Painel analítico** | Insights para a equipe médica (fatores de risco, hábitos, correlações) | Aba analítica no Streamlit com gráficos interativos (Plotly) |
-| **Deploy da aplicação** | Aplicação web para diagnóstico interativo | Streamlit Cloud: [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/) + extra Docker/Compose para rodada local |
+| **Deploy da aplicação** | Aplicação web para diagnóstico interativo | Streamlit Cloud: [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/) + extra FastAPI/Docker para MLOps local |
 | **Repositório GitHub** | Código limpo e estruturado | Estrutura modular com `/data`, `/notebooks`, `/src`, `/app` e `/documentacao` |
 | **Vídeo de apresentação** | 4 a 10 minutos com foco em visão médica e de negócio | Roteiro estruturado cobrindo problema, dados, arquitetura e demo do app |
 
@@ -36,6 +36,8 @@ fase4-postech/
 ├── src/
 │   ├── data_pipeline.py           # Limpeza, IMC e ColumnTransformer
 │   └── train.py                   # Treino, comparação e exportação
+├── api/
+│   └── main.py                    # Extra: API REST FastAPI
 ├── documentacao/
 │   ├── 01-plano-mestre.md
 │   ├── 02-plano-desenvolvimento-checklist.md

@@ -28,7 +28,7 @@ Citar o tamanho da base: **2.111** pacientes, **7** níveis, classes equilibrada
 - Comparação Random Forest vs. Gradient Boosting; campeão serializado.
 - Resultado: acurácia de teste **acima de 94%**, muito acima do mínimo de **75%**.
 - Uma frase honesta: altura e peso (via IMC) são fortes, mas hábitos explicam o contexto da intervenção.
-- Extra (10 segundos, se couber): o mesmo app também sobe com `docker compose up`, mas o link da banca é o Streamlit Cloud.
+- Extra (10 segundos, se couber): o mesmo modelo também é servido em FastAPI e sobe com `docker compose up` (API + tela); o link da banca continua sendo o Streamlit Cloud.
 
 Não abrir o notebook inteiro. Um slide ou 10 segundos no `classification_report` bastam.
 

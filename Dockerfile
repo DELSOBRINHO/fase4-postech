@@ -21,12 +21,13 @@ RUN pip install --upgrade pip \
 
 COPY app/ /app/app/
 COPY src/ /app/src/
+COPY api/ /app/api/
 COPY data/ /app/data/
 COPY .streamlit/ /app/.streamlit/
 
-EXPOSE 8501
+EXPOSE 8501 8000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl --fail http://localhost:8501/_stcore/health || exit 1
 
-ENTRYPOINT ["streamlit", "run", "app/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "app/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

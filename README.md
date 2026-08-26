@@ -77,7 +77,7 @@ Base `Obesity.csv` (2.111 pacientes, 17 colunas, alvo `Obesity` com 7 classes). 
 | [Plano de desenvolvimento](documentacao/02-plano-desenvolvimento-checklist.md) | Checklist por fase |
 | [Enunciado](documentacao/03-enunciado-tech-challenge.md) | Texto oficial do desafio |
 | [Dicionário](documentacao/04-dicionario-dados.md) | Variáveis clínicas |
-| [Roteiro do vídeo](documentacao/05-roteiro-video.md) | 5–7 minutos, visão de negócio |
+| [Roteiro do vídeo](documentacao/05-roteiro-video.md) | Texto falado, bloco a bloco (5–7 min) |
 | [Deploy Streamlit](documentacao/06-guia-deploy-streamlit.md) | Publicação no Cloud |
 | [Docker (extra)](documentacao/07-guia-docker.md) | Container local: API + Streamlit |
 | [FastAPI (extra)](documentacao/08-guia-fastapi.md) | API REST de inferência |

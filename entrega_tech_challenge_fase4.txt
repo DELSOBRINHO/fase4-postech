@@ -5,14 +5,14 @@ ESTUDANTE: [Seu Nome Completo]
 ======================================================================
 
 1. LINK DA APLICAÇÃO EM PRODUÇÃO (STREAMLIT):
-https://[seu-usuario]-tech-challenge-fase4-obesity.streamlit.app/
+https://avaliapeso.streamlit.app/
 
 2. LINK DO REPOSITÓRIO GITHUB (CÓDIGO-FONTE & PIPELINE):
 https://github.com/DELSOBRINHO/fase4-postech
 
 3. LINK DO PAINEL ANALÍTICO:
 Disponível na aba "Painel analítico e insights" integrada na própria aplicação Streamlit:
-https://[seu-usuario]-tech-challenge-fase4-obesity.streamlit.app/
+https://avaliapeso.streamlit.app/
 
 4. LINK DO VÍDEO DE APRESENTAÇÃO (YOUTUBE / LOOM):
 https://www.loom.com/share/[seu-link-de-video]

@@ -168,10 +168,24 @@ def render_diagnosis(model) -> None:
             f"**IMC calculado:** {imc:.2f} kg/m²  \n"
             f"**Referência OMS (IMC):** {classify_imc(imc)}"
         )
+        risk = result.get("behavioral_risk") or {}
+        if risk:
+            risk_text = (
+                f"**{risk.get('label', 'Hábitos')}** — o grau de obesidade segue o IMC (OMS); "
+                "os hábitos alimentares, o histórico familiar e o estilo de vida entram neste "
+                "perfil de risco para a conduta."
+            )
+            level = risk.get("level")
+            if level == "alto":
+                st.warning(risk_text)
+            elif level == "baixo":
+                st.success(risk_text)
+            else:
+                st.info(risk_text)
         st.caption(
-            "O modelo combina biometria (incluindo IMC) com hábitos alimentares, "
-            "histórico familiar e estilo de vida. Divergências entre IMC e a classe "
-            "predita merecem revisão clínica do contexto comportamental."
+            "Em obesidade tipo I/II/III o diagnóstico acompanha as faixas da OMS "
+            "(30 / 35 / 40 kg/m²). O modelo de machine learning continua sendo treinado "
+            "com todas as variáveis; hábitos não rebaixam o grau quando o IMC já define a classe."
         )
     with right:
         prob_df = pd.DataFrame(

@@ -66,6 +66,14 @@ IMC_WHO_BANDS = [
     (40.0, float("inf"), "Obesidade tipo III"),
 ]
 
+# Grau de obesidade pela OMS (I/II/III). Abaixo de 30 kg/m² o modelo decide
+# entre abaixo do peso, normal e sobrepeso, onde há mais sobreposição na base.
+WHO_OBESITY_CLASS = [
+    (40.0, "Obesity_Type_III"),
+    (35.0, "Obesity_Type_II"),
+    (30.0, "Obesity_Type_I"),
+]
+
 
 def add_clinical_features(df: pd.DataFrame) -> pd.DataFrame:
     """Inclui o IMC como métrica clínica de apoio ao modelo."""
@@ -80,6 +88,47 @@ def classify_imc(imc: float) -> str:
         if low <= imc < high:
             return label
     return "Indeterminado"
+
+
+def who_obesity_class(imc: float) -> str | None:
+    """Classe do dataset alinhada ao grau de obesidade da OMS, ou None se IMC < 30."""
+    for cutoff, label in WHO_OBESITY_CLASS:
+        if imc >= cutoff:
+            return label
+    return None
+
+
+def behavioral_risk(payload: dict) -> dict:
+    """Perfil de hábitos para a triagem (não substitui o grau pelo IMC)."""
+    score = 0
+    if str(payload.get("family_history", "")).lower() == "yes":
+        score += 2
+    if str(payload.get("FAVC", "")).lower() == "yes":
+        score += 2
+    if payload.get("CAEC") in {"Frequently", "Always"}:
+        score += 1
+    if float(payload.get("FCVC", 2)) <= 1.5:
+        score += 1
+    if float(payload.get("FAF", 1)) <= 1:
+        score += 2
+    if float(payload.get("TUE", 0)) >= 2:
+        score += 1
+    if payload.get("CALC") in {"Frequently", "Always"}:
+        score += 1
+    if payload.get("MTRANS") in {"Automobile", "Public_Transportation"}:
+        score += 1
+    if float(payload.get("CH2O", 2)) <= 1:
+        score += 1
+    if str(payload.get("SCC", "")).lower() == "no":
+        score += 1
+
+    if score >= 8:
+        level, label = "alto", "Hábitos de risco elevado"
+    elif score >= 4:
+        level, label = "moderado", "Hábitos de risco moderado"
+    else:
+        level, label = "baixo", "Hábitos de menor risco"
+    return {"score": score, "level": level, "label": label}
 
 
 def load_raw_dataset(path: str) -> pd.DataFrame:

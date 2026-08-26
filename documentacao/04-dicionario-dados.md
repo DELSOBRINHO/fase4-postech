@@ -54,4 +54,4 @@ O conjunto está relativamente balanceado; ainda assim o treino usa `stratify` p
 | --- | --- | --- |
 | `IMC` | `Weight / Height²` | Feature de apoio clínico no modelo e cartão de referência OMS na interface |
 
-O modelo **não** substitui o IMC pela classe da OMS: ele combina IMC com hábitos, histórico familiar e rotina. Na interface, a faixa OMS do IMC é exibida ao lado da predição para a equipe médica cruzar as duas leituras.
+O modelo **não** substitui o IMC pela classe da OMS no grau de obesidade: tipo I/II/III no diagnóstico segue as faixas 30 / 35 / 40 kg/m². Hábitos, histórico familiar e rotina entram no perfil de risco da triagem e no treino do modelo (abaixo de 30 kg/m² o classificador decide entre baixo peso, normal e sobrepeso).

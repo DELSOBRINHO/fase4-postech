@@ -4,7 +4,18 @@ Duração-alvo: **6 minutos** (limite oficial: 4–10).
 Fale como **cientista de dados do hospital**, não como programador.  
 Grave a tela do app em https://avaliapeso.streamlit.app/ em tela cheia. Você pode aparecer num canto pequeno; o que precisa ficar legível são os gráficos e o diagnóstico.
 
-**Antes de gravar:** abrir o app, deixar na aba **Diagnóstico preditivo**, zoom do navegador em 100–110%. Ter este texto à frente (teleprompter ou segunda tela).
+**Antes de gravar:** abrir o PDF `documentacao/slides_apresentacao.pdf` em modo apresentação (tela cheia) e o app em https://avaliapeso.streamlit.app/ numa segunda janela. Zoom do navegador em 100–110%. Ter este texto à frente (teleprompter ou segunda tela).
+
+**Como combinar slides e app**
+
+| Tempo | Slides | Depois |
+| --- | --- | --- |
+| 0:00–1:00 | 1 a 3 (capa, problema, entrega) | — |
+| 1:00–2:10 | 4 e 5 (coorte e achados), depois **ir ao painel do app** | aba Painel |
+| 2:10–3:20 | 6 e 7 (modelo e resultado) | — |
+| 3:20–5:00 | 8 e 9 (paciente e leitura), depois **ir ao diagnóstico** | preencher o paciente |
+| 5:00–5:50 | 10, depois **voltar ao painel** | KPIs |
+| 5:50–6:30 | 11 a 13 (impacto, links, obrigado) | URL na barra |
 
 **Links para citar no fechamento**
 
@@ -15,7 +26,7 @@ Grave a tela do app em https://avaliapeso.streamlit.app/ em tela cheia. Você po
 
 ## Bloco 1 — Quem sou e qual é o problema (0:00 a 1:00)
 
-**Tela:** capa do app (Diagnóstico preditivo), sem clicar ainda.
+**Tela:** slides 1–3. Ainda não abrir o app.
 
 **Fale:**
 
@@ -33,7 +44,7 @@ Grave a tela do app em https://avaliapeso.streamlit.app/ em tela cheia. Você po
 
 ## Bloco 2 — Os dados e o que o hospital precisa enxergar (1:00 a 2:10)
 
-**Tela:** clique em **Painel analítico e insights**. Deixe os quatro KPIs visíveis. Role devagar até o gráfico de histórico familiar e o de atividade física.
+**Tela:** slides 4–5; em seguida a aba **Painel analítico e insights** no app. Deixe os quatro KPIs visíveis. Role até o gráfico de histórico familiar e o de atividade física.
 
 **Fale (olhando os números na tela):**
 
@@ -55,7 +66,7 @@ Grave a tela do app em https://avaliapeso.streamlit.app/ em tela cheia. Você po
 
 ## Bloco 3 — Como o modelo foi feito (sem virar aula de código) (2:10 a 3:20)
 
-**Tela:** pode voltar ao diagnóstico **ou** mostrar 5 segundos do GitHub (`src/train.py` / métricas). Prefira permanecer no app e só narrar.
+**Tela:** slides 6–7. Não abrir notebook.
 
 **Fale:**
 
@@ -73,7 +84,7 @@ Grave a tela do app em https://avaliapeso.streamlit.app/ em tela cheia. Você po
 
 ## Bloco 4 — Demo do diagnóstico (3:20 a 5:00) — a parte mais importante
 
-**Tela:** **Diagnóstico preditivo**. Preencha **enquanto fala**. Não leia cada rótulo técnico (FAVC, FAF); traduza.
+**Tela:** slides 8–9 e, em seguida, a aba **Diagnóstico preditivo** no app. Preencha **enquanto fala**. Não leia cada rótulo técnico (FAVC, FAF); traduza.
 
 ### Paciente de demonstração (alto risco)
 
@@ -120,7 +131,7 @@ Se o gráfico demorar um segundo, fique em silêncio; não peça desculpa.
 
 ## Bloco 5 — Demo do painel para a gestão (5:00 a 5:50)
 
-**Tela:** **Painel analítico e insights**. Mostre KPIs e **dois** gráficos. Role até a leitura clínica do rodapé.
+**Tela:** slide 10 e depois a aba **Painel analítico e insights**. Mostre KPIs e **dois** gráficos. Role até a leitura clínica do rodapé.
 
 **Fale:**
 
@@ -136,7 +147,7 @@ Se o gráfico demorar um segundo, fique em silêncio; não peça desculpa.
 
 ## Bloco 6 — Impacto, próximos passos e fechamento (5:50 a 6:30)
 
-**Tela:** volte ao diagnóstico **ou** deixe o painel. No final, mostre a URL na barra do navegador.
+**Tela:** slides 11–13. No final, mostre a URL na barra do navegador.
 
 **Fale:**
 

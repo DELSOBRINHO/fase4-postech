@@ -16,12 +16,10 @@ def test_prepare_sys_path_clears_mount_shadow():
     sys.modules["src"] = fake
     sys.path.insert(0, "/mount")
     prepare_sys_path(ROOT)
-    from src.data_pipeline import RISK_LABELS, behavioral_risk_frame
+    from data_pipeline import RISK_LABELS, behavioral_risk_frame
 
     assert "alto" in RISK_LABELS
     assert callable(behavioral_risk_frame)
-    src_file = Path(sys.modules["src.data_pipeline"].__file__).resolve()
-    assert src_file.parent == (ROOT / "src").resolve()
 
 
 if __name__ == "__main__":

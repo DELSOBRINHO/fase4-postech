@@ -1,7 +1,7 @@
-"""Resolve o pacote `src` do repositório no Streamlit Cloud.
+"""Caminhos do repositório no Streamlit Cloud.
 
-O Cloud clona em `/mount/src/<repo>`. Se `/mount` entra no `sys.path`,
-`import src` aponta para o diretório de mount, não para `fase4-postech/src`.
+O Cloud clona em `/mount/src/<repo>`. O nome `src` colide com esse mount,
+então o app importa os módulos pela pasta `src/` no sys.path, sem o prefixo `src.`.
 """
 
 from __future__ import annotations
@@ -11,10 +11,13 @@ from pathlib import Path
 
 _APP_DIR = Path(__file__).resolve().parent
 ROOT = _APP_DIR.parent
+SRC = ROOT / "src"
 
 
 def prepare_sys_path(root: Path | None = None) -> Path:
     project_root = Path(root) if root is not None else ROOT
+    src_dir = str(project_root / "src")
+    root_s = str(project_root)
     filtered = []
     for entry in sys.path:
         try:
@@ -26,11 +29,11 @@ def prepare_sys_path(root: Path | None = None) -> Path:
             continue
         filtered.append(entry)
     sys.path[:] = filtered
-    root_s = str(project_root)
-    if root_s in sys.path:
-        sys.path.remove(root_s)
+    for path in (src_dir, root_s):
+        if path in sys.path:
+            sys.path.remove(path)
+    sys.path.insert(0, src_dir)
     sys.path.insert(0, root_s)
-
     loaded = sys.modules.get("src")
     if loaded is not None:
         project_src = str((project_root / "src").resolve())

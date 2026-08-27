@@ -14,15 +14,20 @@ import plotly.express as px
 import requests
 import streamlit as st
 
-from src.data_pipeline import (  # noqa: E402
-    CLASS_ORDER,
-    LABEL_PT,
-    RISK_LABELS,
-    add_clinical_features,
-    behavioral_risk_frame,
-    classify_imc,
-)
-from src.inference import predict_patient  # noqa: E402
+try:
+    from data_pipeline import (
+        CLASS_ORDER,
+        LABEL_PT,
+        RISK_LABELS,
+        add_clinical_features,
+        behavioral_risk_frame,
+        classify_imc,
+    )
+    from inference import predict_patient
+except Exception as exc:  # noqa: BLE001
+    st.set_page_config(page_title="Erro ao iniciar", layout="wide")
+    st.error(f"Falha ao carregar o aplicativo: {type(exc).__name__}: {exc}")
+    st.stop()
 
 MODEL_PATH = ROOT / "app" / "model.joblib"
 DATA_PATH = ROOT / "data" / "Obesity.csv"

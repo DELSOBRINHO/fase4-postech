@@ -7,14 +7,24 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
-from src.data_pipeline import (
-    FEATURE_COLS,
-    LABEL_PT,
-    add_clinical_features,
-    behavioral_risk,
-    classify_imc,
-    who_obesity_class,
-)
+try:
+    from src.data_pipeline import (
+        FEATURE_COLS,
+        LABEL_PT,
+        add_clinical_features,
+        behavioral_risk,
+        classify_imc,
+        who_obesity_class,
+    )
+except ImportError:
+    from data_pipeline import (
+        FEATURE_COLS,
+        LABEL_PT,
+        add_clinical_features,
+        behavioral_risk,
+        classify_imc,
+        who_obesity_class,
+    )
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_MODEL_PATH = ROOT / "app" / "model.joblib"

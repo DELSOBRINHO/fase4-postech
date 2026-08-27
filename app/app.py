@@ -4,26 +4,23 @@ from __future__ import annotations
 
 import os
 
-from repo_path import ROOT, prepare_sys_path
-
-prepare_sys_path()
-
 import joblib
 import pandas as pd
 import plotly.express as px
 import requests
 import streamlit as st
 
+from repo_path import ROOT, load_project_modules
+
 try:
-    from data_pipeline import (
-        CLASS_ORDER,
-        LABEL_PT,
-        RISK_LABELS,
-        add_clinical_features,
-        behavioral_risk_frame,
-        classify_imc,
-    )
-    from inference import predict_patient
+    ROOT, _pipeline, _inference = load_project_modules()
+    CLASS_ORDER = _pipeline.CLASS_ORDER
+    LABEL_PT = _pipeline.LABEL_PT
+    RISK_LABELS = _pipeline.RISK_LABELS
+    add_clinical_features = _pipeline.add_clinical_features
+    behavioral_risk_frame = _pipeline.behavioral_risk_frame
+    classify_imc = _pipeline.classify_imc
+    predict_patient = _inference.predict_patient
 except Exception as exc:  # noqa: BLE001
     st.set_page_config(page_title="Erro ao iniciar", layout="wide")
     st.error(f"Falha ao carregar o aplicativo: {type(exc).__name__}: {exc}")

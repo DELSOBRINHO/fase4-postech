@@ -19,7 +19,9 @@ if str(ROOT) not in sys.path:
 from src.data_pipeline import (  # noqa: E402
     CLASS_ORDER,
     LABEL_PT,
+    RISK_LABELS,
     add_clinical_features,
+    behavioral_risk_frame,
     classify_imc,
 )
 from src.inference import predict_patient  # noqa: E402
@@ -70,6 +72,7 @@ def load_model():
 def load_data() -> pd.DataFrame:
     df = pd.read_csv(DATA_PATH)
     df = add_clinical_features(df)
+    df = behavioral_risk_frame(df)
     df["Obesity_PT"] = df["Obesity"].map(LABEL_PT).fillna(df["Obesity"])
     df["Obesity_PT"] = pd.Categorical(
         df["Obesity_PT"],
@@ -242,6 +245,61 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
         f"{(df['FAVC'] == 'yes').mean() * 100:.1f}%",
     )
 
+    st.subheader("Perfis de risco comportamental")
+    st.caption(
+        "Mesma leitura do diagnóstico individual: histórico familiar, alimentação, "
+        "atividade física, telas, álcool e transporte. O grau de obesidade continua "
+        "seguindo o IMC (OMS); aqui a equipe vê onde concentrar prevenção."
+    )
+    risk_order = [
+        RISK_LABELS["alto"],
+        RISK_LABELS["moderado"],
+        RISK_LABELS["baixo"],
+    ]
+    risk_color = {
+        RISK_LABELS["alto"]: "#C0392B",
+        RISK_LABELS["moderado"]: "#D68910",
+        RISK_LABELS["baixo"]: "#1A9B73",
+    }
+    share = df["risk_label"].value_counts(normalize=True)
+    r1, r2, r3 = st.columns(3)
+    r1.metric("Risco elevado", f"{share.get(RISK_LABELS['alto'], 0) * 100:.1f}%")
+    r2.metric("Risco moderado", f"{share.get(RISK_LABELS['moderado'], 0) * 100:.1f}%")
+    r3.metric("Menor risco", f"{share.get(RISK_LABELS['baixo'], 0) * 100:.1f}%")
+
+    p1, p2 = st.columns(2)
+    with p1:
+        fig_risk = px.histogram(
+            df,
+            x="risk_label",
+            color="risk_label",
+            title="Pacientes por perfil de risco",
+            category_orders={"risk_label": risk_order},
+            color_discrete_map=risk_color,
+        )
+        fig_risk.update_layout(
+            xaxis_title="",
+            yaxis_title="Pacientes",
+            showlegend=False,
+        )
+        st.plotly_chart(fig_risk, width="stretch")
+    with p2:
+        fig_risk_class = px.histogram(
+            df,
+            x="Obesity_PT",
+            color="risk_label",
+            barmode="stack",
+            title="Perfil de risco × nível de obesidade",
+            category_orders={
+                "Obesity_PT": [LABEL_PT[c] for c in CLASS_ORDER],
+                "risk_label": risk_order,
+            },
+            color_discrete_map=risk_color,
+            labels={"risk_label": "Perfil de risco"},
+        )
+        fig_risk_class.update_layout(xaxis_title="", yaxis_title="Pacientes")
+        st.plotly_chart(fig_risk_class, width="stretch")
+
     g1, g2 = st.columns(2)
     with g1:
         fig_dist = px.histogram(
@@ -346,7 +404,7 @@ def render_dashboard(model, df: pd.DataFrame) -> None:
 - Histórico familiar de excesso de peso concentra-se nos níveis mais altos de obesidade.
 - Baixa frequência de atividade física (FAF) acompanha classes de maior gravidade.
 - Consumo frequente de alimentos calóricos (FAVC) é majoritário na coorte e se associa a classes elevadas.
-- O IMC discrimina bem os níveis, mas hábitos e rotina ajudam a contextualizar o risco e o plano de intervenção.
+- O painel de **perfis de risco** (elevado / moderado / menor risco) resume hábitos da coorte para priorizar prevenção; o grau I/II/III no paciente individual segue o IMC.
         """
     )
 

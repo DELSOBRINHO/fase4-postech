@@ -98,6 +98,21 @@ def who_obesity_class(imc: float) -> str | None:
     return None
 
 
+RISK_LABELS = {
+    "alto": "Hábitos de risco elevado",
+    "moderado": "Hábitos de risco moderado",
+    "baixo": "Hábitos de menor risco",
+}
+
+
+def risk_level_from_score(score: int | float) -> str:
+    if score >= 8:
+        return "alto"
+    if score >= 4:
+        return "moderado"
+    return "baixo"
+
+
 def behavioral_risk(payload: dict) -> dict:
     """Perfil de hábitos para a triagem (não substitui o grau pelo IMC)."""
     score = 0
@@ -122,13 +137,39 @@ def behavioral_risk(payload: dict) -> dict:
     if str(payload.get("SCC", "")).lower() == "no":
         score += 1
 
-    if score >= 8:
-        level, label = "alto", "Hábitos de risco elevado"
-    elif score >= 4:
-        level, label = "moderado", "Hábitos de risco moderado"
-    else:
-        level, label = "baixo", "Hábitos de menor risco"
-    return {"score": score, "level": level, "label": label}
+    level = risk_level_from_score(score)
+    return {"score": score, "level": level, "label": RISK_LABELS[level]}
+
+
+def behavioral_risk_frame(df: pd.DataFrame) -> pd.DataFrame:
+    """Aplica o mesmo perfil de risco do diagnóstico a cada linha da coorte."""
+    out = df.copy()
+    family = out["family_history"].astype(str).str.lower().eq("yes")
+    favc = out["FAVC"].astype(str).str.lower().eq("yes")
+    caec = out["CAEC"].isin(["Frequently", "Always"])
+    fcvc = out["FCVC"].astype(float).le(1.5)
+    faf = out["FAF"].astype(float).le(1)
+    tue = out["TUE"].astype(float).ge(2)
+    calc = out["CALC"].isin(["Frequently", "Always"])
+    mtrans = out["MTRANS"].isin(["Automobile", "Public_Transportation"])
+    ch2o = out["CH2O"].astype(float).le(1)
+    scc = out["SCC"].astype(str).str.lower().eq("no")
+    score = (
+        family.astype(int) * 2
+        + favc.astype(int) * 2
+        + caec.astype(int)
+        + fcvc.astype(int)
+        + faf.astype(int) * 2
+        + tue.astype(int)
+        + calc.astype(int)
+        + mtrans.astype(int)
+        + ch2o.astype(int)
+        + scc.astype(int)
+    )
+    out["risk_score"] = score
+    out["risk_level"] = score.map(risk_level_from_score)
+    out["risk_label"] = out["risk_level"].map(RISK_LABELS)
+    return out
 
 
 def load_raw_dataset(path: str) -> pd.DataFrame:

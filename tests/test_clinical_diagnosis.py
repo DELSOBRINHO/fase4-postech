@@ -1,5 +1,6 @@
 """Garante que o grau I/II/III no diagnóstico segue o IMC (OMS), não o NCP."""
 
+from src.data_pipeline import behavioral_risk, behavioral_risk_frame, load_raw_dataset
 from src.inference import predict_patient
 
 FEMALE_120KG = dict(
@@ -65,8 +66,25 @@ def test_who_bands():
     assert r2["prediction"] == "Obesity_Type_II", r2
 
 
+def test_dashboard_risk_matches_diagnosis():
+    from pathlib import Path
+
+    df = load_raw_dataset(Path("data/Obesity.csv"))
+    scored = behavioral_risk_frame(df)
+    assert scored["risk_label"].nunique() >= 1
+    row = scored.iloc[0]
+    payload = {c: row[c] for c in [
+        "Gender", "Age", "Height", "Weight", "family_history", "FAVC", "FCVC",
+        "NCP", "CAEC", "SMOKE", "CH2O", "SCC", "FAF", "TUE", "CALC", "MTRANS",
+    ]}
+    individual = behavioral_risk(payload)
+    assert int(row["risk_score"]) == individual["score"]
+    assert row["risk_level"] == individual["level"]
+
+
 if __name__ == "__main__":
     test_ncp_does_not_drop_type_iii()
     test_healthy_lifestyle_still_type_iii_when_bmi_41()
     test_who_bands()
+    test_dashboard_risk_matches_diagnosis()
     print("ok")

@@ -50,7 +50,7 @@ Abrir `http://localhost:8501` e percorrer:
 | Sintoma | Causa típica | Correção |
 | --- | --- | --- |
 | `FileNotFoundError: model.joblib` | Modelo não commitado ou caminho errado | Rodar `python -m src.train` e dar push em `app/model.joblib` |
-| App abre em branco / erro de import `src` | `sys.path` sem a raiz | Já tratado em `app/app.py` |
+| App abre em branco / erro de import `src` | Streamlit Cloud monta o repo em `/mount/src/<repo>` e `import src` aponta para o mount | Já tratado em `app/repo_path.py` |
 | `ModuleNotFoundError: sklearn` | `requirements.txt` ausente na raiz | Usar o arquivo da raiz no Cloud |
 | Gráficos lentos | Dataset inteiro em cada rerun | `st.cache_data` já aplicado em `load_data` |
 

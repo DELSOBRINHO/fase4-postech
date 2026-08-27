@@ -3,18 +3,16 @@
 from __future__ import annotations
 
 import os
-import sys
-from pathlib import Path
+
+from repo_path import ROOT, prepare_sys_path
+
+prepare_sys_path()
 
 import joblib
 import pandas as pd
 import plotly.express as px
 import requests
 import streamlit as st
-
-ROOT = Path(__file__).resolve().parent.parent
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
 
 from src.data_pipeline import (  # noqa: E402
     CLASS_ORDER,

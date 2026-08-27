@@ -185,11 +185,6 @@ def render_diagnosis(model) -> None:
                 st.success(risk_text)
             else:
                 st.info(risk_text)
-        st.caption(
-            "Em obesidade tipo I/II/III o diagnóstico acompanha as faixas da OMS "
-            "(30 / 35 / 40 kg/m²). O modelo de machine learning continua sendo treinado "
-            "com todas as variáveis; hábitos não rebaixam o grau quando o IMC já define a classe."
-        )
     with right:
         prob_df = pd.DataFrame(
             {

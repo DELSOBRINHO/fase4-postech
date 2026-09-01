@@ -1,1 +1,1 @@
-"""Pacote de pipeline e treinamento do modelo de classificação de obesidade."""
+"""Pipeline de forecasting do preço do petróleo Brent (IPEA Data)."""

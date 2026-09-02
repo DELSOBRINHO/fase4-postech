@@ -61,12 +61,12 @@ O app tenta atualizar a API; se o IPEA estiver instável, usa o CSV em `data/raw
 | Branch | Produto | Streamlit |
 | --- | --- | --- |
 | `main` | Obesidade (entrega original) | [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/) — **não alterar** |
-| `develop` | Brent (prova substitutiva) | Novo app no Cloud, arquivo `app/app.py` |
+| `cursor/main-dev-2a05` | Brent (prova substitutiva) | [https://precopetroleo.streamlit.app/](https://precopetroleo.streamlit.app/) |
 
-No Streamlit Community Cloud: **New app** → repo `DELSOBRINHO/fase4-postech` → branch **`develop`** → Main file `app/app.py`. Não reutilize o app do `main`.
+O Cloud do Brent está neste branch (`cursor/main-dev-2a05`, arquivo `app/app.py`). A branch `develop` tem o mesmo código; o Streamlit às vezes não lista branch nova logo após o push — dá para digitar o nome `develop` no campo Branch se quiser trocar depois.
 
 O Cloud monta o clone em `/mount/src/<repo>`; `app/repo_path.py` carrega `src/*.py` pelo caminho do arquivo para evitar colisão de import.
 
 Links de submissão: [`entrega_tech_challenge_fase4.txt`](entrega_tech_challenge_fase4.txt).
 
-Código-fonte (Brent): [https://github.com/DELSOBRINHO/fase4-postech/tree/develop](https://github.com/DELSOBRINHO/fase4-postech/tree/develop)
+Código-fonte (Brent): [https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05](https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05)

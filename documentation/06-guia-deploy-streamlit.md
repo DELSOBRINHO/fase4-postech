@@ -9,11 +9,15 @@
 ## Passos
 
 1. Acesse [https://share.streamlit.io](https://share.streamlit.io) e autorize o GitHub.
-2. **New app** (não edite o app já publicado no `main`) → repositório `DELSOBRINHO/fase4-postech`, branch **`develop`**.
+2. **New app** (não edite o app já publicado no `main`) → repositório `DELSOBRINHO/fase4-postech`, branch **`cursor/main-dev-2a05`**.
 3. Main file path: `app/app.py`.
 4. Deploy.
 
-O `main` continua com o app de obesidade em [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/). Este guia é só para o **segundo** app (Brent).
+**App Brent em produção:** [https://precopetroleo.streamlit.app/](https://precopetroleo.streamlit.app/)
+
+O `main` continua com o app de obesidade em [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/).
+
+Se o Cloud não listar uma branch recém-criada (ex.: `develop`), use o seletor e **digite o nome** ou publique pela branch que já aparece.
 
 A aplicação resolve dados e modelo a partir da raiz:
 

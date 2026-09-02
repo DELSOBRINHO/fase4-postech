@@ -97,5 +97,5 @@ python -m src.model_trainer
 streamlit run app/app.py
 ```
 
-Conectar o branch de entrega ao Streamlit Community Cloud (`app/app.py`).  
+Conectar o branch **`develop`** ao Streamlit Community Cloud (`app/app.py`), sem alterar o app já publicado no `main`.  
 Preencher `entrega_tech_challenge_fase4.txt` com os links obrigatórios (app + notebook + repositório).

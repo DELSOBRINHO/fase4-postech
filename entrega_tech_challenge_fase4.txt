@@ -5,7 +5,10 @@ ESTUDANTE: DELMIR BARTOLOMEU SOBRINHO
 ======================================================================
 
 1. LINK DA APLICAÇÃO EM PRODUÇÃO (STREAMLIT):
-[Publicar o branch cursor/main-dev-2a05 no Streamlit Community Cloud — Main file: app/app.py]
+https://precopetroleo.streamlit.app/
+
+O app do main (obesidade) permanece intacto em:
+https://avaliapeso.streamlit.app/
 
 2. LINK DO REPOSITÓRIO GITHUB (CÓDIGO-FONTE & PIPELINE):
 https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05

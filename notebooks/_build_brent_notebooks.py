@@ -36,6 +36,7 @@ def write_eda() -> None:
             "Série oficial: `EIA366_PBRENT366` (serid `1650971490`), preço Brent FOB em US$/barril."
         ),
         _code(
+            "%matplotlib inline\n"
             "from pathlib import Path\n"
             "import sys\n"
             "\n"
@@ -141,6 +142,7 @@ def write_model() -> None:
             "métricas e serialização do modelo campeão."
         ),
         _code(
+            "%matplotlib inline\n"
             "from pathlib import Path\n"
             "import sys\n"
             "\n"

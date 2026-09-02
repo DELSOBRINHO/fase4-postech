@@ -1,36 +1,36 @@
-# Sistema preditivo hospitalar de diagnóstico de obesidade
+# Sistema preditivo do preço do petróleo Brent
 
-Tech Challenge Fase 4 — FIAP POSTECH (Data Viz & Production Models).
+Tech Challenge Fase 4 — **Prova Substitutiva** (FIAP POSTECH Data Analytics).
 
-Aplicação de apoio à equipe médica para **classificar o nível de obesidade** a partir de dados biométricos, histórico familiar e hábitos, com **painel analítico** para a gestão clínica.
+Solução ponta a ponta para projetar o preço diário do barril **Brent FOB em US$**, com pipeline de séries temporais e aplicação Streamlit de apoio à diretoria e à mesa de trading.
 
 ## O problema
 
-A obesidade é uma condição crônica multifatorial. O hospital precisa de um fluxo de triagem padronizado: um modelo com assertividade acima de 75% e uma interface que o corpo clínico consiga usar sem conhecer o código.
+A oscilação do Brent impacta caixa, CAPEX/OPEX, hedges e precificação de combustíveis. A entrega oficial pede um modelo preditivo instanciado em uma aplicação Streamlit, usando a série do IPEA Data (serid `1650971490` / `EIA366_PBRENT366`).
 
 Este repositório entrega:
 
-1. Pipeline Scikit-Learn (`ColumnTransformer` + `Pipeline`) com IMC como atributo clínico.
-2. Modelo serializado (**Gradient Boosting**, acurácia de teste **98,35%**; Random Forest 97,87%).
-3. App Streamlit com diagnóstico individual e dashboard epidemiológico, em produção em [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/).
-4. Extra opcional: FastAPI (`/predict`) + Docker Compose unindo API e frontend Streamlit.
-5. Documentação de produto em [`documentacao/`](documentacao/).
+1. Extração da série oficial (API OData + fallback HTML) e CSV versionado.
+2. Engenharia de lags, médias móveis, volatilidade e calendário — sem shuffle.
+3. Comparação temporal (Naive, Random Forest, XGBoost; Prophet/SARIMAX/LightGBM quando disponíveis).
+4. Modelo campeão serializado em `app/model.joblib`.
+5. App Streamlit com previsão (7/15/30 dias úteis), simulador financeiro, linha do tempo geopolítica e métricas.
+
+Planos: [`documentation/PLANO_MESTRE.md`](documentation/PLANO_MESTRE.md) e [`documentation/PLANO_DESENVOLVIMENTO.md`](documentation/PLANO_DESENVOLVIMENTO.md).
 
 ## Estrutura
 
 ```text
-data/Obesity.csv
-notebooks/01_eda_analise_medica.ipynb
-notebooks/02_pipeline_modelagem.ipynb
-src/data_pipeline.py
-src/train.py
-src/inference.py
-api/main.py                 # extra: API REST
+data/raw/brent_oil_raw.csv
+data/processed/brent_oil_features.parquet
+notebooks/01_extracao_eda_brent.ipynb
+notebooks/02_modelagem_forecasting.ipynb
+src/data_loader.py
+src/feature_engineering.py
+src/model_trainer.py
 app/app.py
 app/model.joblib
-documentacao/          # dicionário, métricas, deploy
-Dockerfile             # extra: imagem (API + frontend)
-docker-compose.yml
+documentation/PLANO_MESTRE.md
 entrega_tech_challenge_fase4.txt
 ```
 
@@ -38,50 +38,35 @@ entrega_tech_challenge_fase4.txt
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
-python -m src.train
+python -m src.model_trainer
 streamlit run app/app.py
 ```
 
-O treino grava `app/model.joblib` e `documentacao/metricas_modelo.json`.
-
-## Extra: Docker + FastAPI
-
-O deploy da disciplina é o Streamlit Cloud. Para empacotar **API REST + frontend**:
-
-```bash
-docker compose up --build
-```
-
-- App: http://localhost:8501
-- API (Swagger): http://localhost:8000/docs
-
-API isolada, sem Docker:
-
-```bash
-uvicorn api.main:app --reload --port 8000
-```
-
-Guias: [`07-guia-docker.md`](documentacao/07-guia-docker.md) e [`08-guia-fastapi.md`](documentacao/08-guia-fastapi.md).
+O treino grava `app/model.joblib`, `data/processed/brent_oil_features.parquet` e `documentation/metricas_modelo.json`.
 
 ## Dados
 
-Base `Obesity.csv` (2.111 pacientes, 17 colunas, alvo `Obesity` com 7 classes). Dicionário em [`documentacao/04-dicionario-dados.md`](documentacao/04-dicionario-dados.md).
+Série IPEA [Petróleo bruto Brent (FOB)](http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view).  
+O app tenta atualizar a API; se o IPEA estiver instável, usa o CSV em `data/raw/`.
 
-## Documentação do app
+## Notebooks (entrega obrigatória)
 
-| Documento | Conteúdo |
-| --- | --- |
-| [Dicionário](documentacao/04-dicionario-dados.md) | Variáveis clínicas |
-| [Deploy Streamlit](documentacao/06-guia-deploy-streamlit.md) | Publicação no Cloud |
-| [Docker (extra)](documentacao/07-guia-docker.md) | Container local: API + Streamlit |
-| [FastAPI (extra)](documentacao/08-guia-fastapi.md) | API REST de inferência |
+- [`notebooks/01_extracao_eda_brent.ipynb`](notebooks/01_extracao_eda_brent.ipynb) — extração, trajetória, choques, decomposição e ADF.
+- [`notebooks/02_modelagem_forecasting.ipynb`](notebooks/02_modelagem_forecasting.ipynb) — pipeline completo de modelagem.
 
-## Produção
+## Produção (dois deploys, `main` intacto)
 
-Aplicação e painel analítico: [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/)
+| Branch | Produto | Streamlit |
+| --- | --- | --- |
+| `main` | Obesidade (entrega original) | [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/) — **não alterar** |
+| `cursor/main-dev-2a05` | Brent (prova substitutiva) | [https://precopetroleo.streamlit.app/](https://precopetroleo.streamlit.app/) |
 
-Código-fonte: [https://github.com/DELSOBRINHO/fase4-postech/tree/main](https://github.com/DELSOBRINHO/fase4-postech/tree/main)
+O Cloud do Brent está neste branch (`cursor/main-dev-2a05`, arquivo `app/app.py`). A branch `develop` tem o mesmo código; o Streamlit às vezes não lista branch nova logo após o push — dá para digitar o nome `develop` no campo Branch se quiser trocar depois.
 
-O arquivo de submissão da disciplina está em [`entrega_tech_challenge_fase4.txt`](entrega_tech_challenge_fase4.txt). Falta apenas o link do vídeo de apresentação.
+O Cloud monta o clone em `/mount/src/<repo>`; `app/repo_path.py` carrega `src/*.py` pelo caminho do arquivo para evitar colisão de import.
+
+Links de submissão: [`entrega_tech_challenge_fase4.txt`](entrega_tech_challenge_fase4.txt).
+
+Código-fonte (Brent): [https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05](https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05)

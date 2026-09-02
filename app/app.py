@@ -1,434 +1,286 @@
-"""Aplicação Streamlit: diagnóstico preditivo e painel analítico hospitalar."""
+"""Aplicação Streamlit: previsão do Brent e apoio à decisão executiva."""
 
 from __future__ import annotations
 
-import os
+import json
+from pathlib import Path
 
 import joblib
 import pandas as pd
-import plotly.express as px
-import requests
+import plotly.graph_objects as go
 import streamlit as st
 
+from config import DEFAULT_BARRELS, DEFAULT_HORIZON, GEOPOLITICAL_EVENTS, HORIZON_OPTIONS
 from repo_path import ROOT, load_project_modules
 
 try:
-    ROOT, _pipeline, _inference = load_project_modules()
-    CLASS_ORDER = _pipeline.CLASS_ORDER
-    LABEL_PT = _pipeline.LABEL_PT
-    RISK_LABELS = _pipeline.RISK_LABELS
-    add_clinical_features = _pipeline.add_clinical_features
-    behavioral_risk_frame = _pipeline.behavioral_risk_frame
-    classify_imc = _pipeline.classify_imc
-    predict_patient = _inference.predict_patient
+    ROOT, data_loader, feature_engineering, model_trainer = load_project_modules()
 except Exception as exc:  # noqa: BLE001
     st.set_page_config(page_title="Erro ao iniciar", layout="wide")
     st.error(f"Falha ao carregar o aplicativo: {type(exc).__name__}: {exc}")
     st.stop()
 
 MODEL_PATH = ROOT / "app" / "model.joblib"
-DATA_PATH = ROOT / "data" / "Obesity.csv"
-INFERENCE_API_URL = os.getenv("INFERENCE_API_URL", "").rstrip("/")
+RAW_PATH = ROOT / "data" / "raw" / "brent_oil_raw.csv"
+METRICS_PATH = ROOT / "documentation" / "metricas_modelo.json"
 
 st.set_page_config(
-    page_title="Sistema de Diagnóstico de Obesidade",
+    page_title="Previsão do Petróleo Brent",
     layout="wide",
-    page_icon="🏥",
+    page_icon="🛢️",
 )
 
-GENDER_OPTIONS = {"Feminino": "Female", "Masculino": "Male"}
-YES_NO = {"Sim": "yes", "Não": "no"}
-CAEC_OPTIONS = {
-    "Não": "no",
-    "Às vezes": "Sometimes",
-    "Frequentemente": "Frequently",
-    "Sempre": "Always",
-}
-CALC_OPTIONS = {
-    "Não bebe": "no",
-    "Às vezes": "Sometimes",
-    "Frequentemente": "Frequently",
-    "Sempre": "Always",
-}
-MTRANS_OPTIONS = {
-    "Transporte público": "Public_Transportation",
-    "Automóvel": "Automobile",
-    "A pé": "Walking",
-    "Motocicleta": "Motorbike",
-    "Bicicleta": "Bike",
-}
+
+@st.cache_data(show_spinner=False)
+def load_raw_series(refresh: bool = False) -> pd.DataFrame:
+    return data_loader.load_or_refresh(path=RAW_PATH, refresh=refresh, timeout=45)
 
 
-@st.cache_resource
-def load_model():
-    if not MODEL_PATH.exists():
-        raise FileNotFoundError(
-            "Modelo não encontrado. Execute `python -m src.train` na raiz do repositório."
-        )
+@st.cache_resource(show_spinner=False)
+def load_bundle():
+    if not MODEL_PATH.is_file():
+        raise FileNotFoundError(f"Modelo não encontrado: {MODEL_PATH}")
     return joblib.load(MODEL_PATH)
 
 
-@st.cache_data
-def load_data() -> pd.DataFrame:
-    df = pd.read_csv(DATA_PATH)
-    df = add_clinical_features(df)
-    df = behavioral_risk_frame(df)
-    df["Obesity_PT"] = df["Obesity"].map(LABEL_PT).fillna(df["Obesity"])
-    df["Obesity_PT"] = pd.Categorical(
-        df["Obesity_PT"],
-        categories=[LABEL_PT[c] for c in CLASS_ORDER],
-        ordered=True,
+@st.cache_data(show_spinner=False)
+def load_metrics_fallback() -> dict:
+    if METRICS_PATH.is_file():
+        return json.loads(METRICS_PATH.read_text(encoding="utf-8"))
+    return {}
+
+
+def format_usd(value: float) -> str:
+    return f"US$ {value:,.2f}"
+
+
+def line_theme(fig: go.Figure, title: str) -> go.Figure:
+    fig.update_layout(
+        title=title,
+        template="plotly_white",
+        hovermode="x unified",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
+        margin=dict(l=16, r=16, t=56, b=16),
+        height=480,
     )
-    return df
+    return fig
 
 
-def render_diagnosis(model) -> None:
-    st.title("Sistema de Apoio à Decisão Médica: Predição de Obesidade")
+def tab_forecast(series: pd.DataFrame, bundle: dict) -> None:
+    last_date = series["date"].max()
+    last_price = float(series.loc[series["date"] == last_date, "price"].iloc[0])
+    model = bundle["model"]
+    cols = bundle["feature_columns"]
+    residual_std = float(bundle.get("residual_std") or 0.0)
+
+    left, mid, right = st.columns(3)
+    left.metric("Último preço oficial (IPEA)", format_usd(last_price), help=f"Cotação em {last_date.date()}")
+    mid.metric("Observações na série", f"{len(series):,}".replace(",", "."))
+    right.metric("Modelo campeão", str(bundle.get("model_name", "—")).replace("_", " ").title())
+
     st.markdown(
-        "Preencha os dados clínicos e comportamentais do paciente para obter o "
-        "**nível estimado de obesidade**. O resultado é um apoio à triagem e "
-        "não substitui avaliação médica presencial."
+        "Projeção recursiva em **dias úteis** a partir da última cotação oficial. "
+        "A faixa sombreada é ±1,96 · σ residual · √h (incerteza crescente com o horizonte)."
     )
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.subheader("1. Dados biométricos")
-        gender_label = st.selectbox("Gênero", list(GENDER_OPTIONS.keys()))
-        age = st.slider("Idade (anos)", 14, 65, 25)
-        height = st.number_input("Altura (m)", min_value=1.40, max_value=2.10, value=1.70, step=0.01)
-        weight = st.number_input("Peso (kg)", min_value=35.0, max_value=180.0, value=70.0, step=0.5)
-
-    with col2:
-        st.subheader("2. Hábitos alimentares")
-        family_label = st.selectbox("Histórico familiar de excesso de peso?", list(YES_NO.keys()))
-        favc_label = st.selectbox("Consome alimentos muito calóricos com frequência (FAVC)?", list(YES_NO.keys()))
-        fcvc = st.slider("Frequência de consumo de vegetais (1 = raro, 3 = sempre)", 1, 3, 2)
-        ncp = st.slider("Número de refeições principais por dia", 1, 4, 3)
-        caec_label = st.selectbox("Lanches entre refeições (CAEC)", list(CAEC_OPTIONS.keys()), index=1)
-        scc_label = st.selectbox("Monitora calorias diárias (SCC)?", list(YES_NO.keys()), index=1)
-
-    with col3:
-        st.subheader("3. Estilo de vida e rotina")
-        smoke_label = st.selectbox("Fumante?", ["Não", "Sim"])
-        ch2o = st.slider("Consumo de água (1 = <1 L, 2 = 1–2 L, 3 = >2 L)", 1, 3, 2)
-        faf = st.slider("Atividade física semanal (0 = nenhuma, 3 = 5x+)", 0, 3, 1)
-        tue = st.slider("Tempo em telas por dia (0 = 0–2 h, 2 = >5 h)", 0, 2, 1)
-        calc_label = st.selectbox("Consumo de álcool (CALC)", list(CALC_OPTIONS.keys()), index=1)
-        mtrans_label = st.selectbox("Meio de transporte habitual", list(MTRANS_OPTIONS.keys()))
-
-    st.markdown("---")
-    if not st.button("Executar diagnóstico clínico", type="primary"):
-        imc_preview = weight / (height**2)
-        st.caption(
-            f"IMC pré-calculado com os dados atuais: **{imc_preview:.2f} kg/m²** "
-            f"({classify_imc(imc_preview)} pela referência da OMS)."
-        )
-        return
-
-    payload = {
-        "Gender": GENDER_OPTIONS[gender_label],
-        "Age": float(age),
-        "Height": float(height),
-        "Weight": float(weight),
-        "family_history": YES_NO[family_label],
-        "FAVC": YES_NO[favc_label],
-        "FCVC": float(fcvc),
-        "NCP": float(ncp),
-        "CAEC": CAEC_OPTIONS[caec_label],
-        "SMOKE": YES_NO[smoke_label],
-        "CH2O": float(ch2o),
-        "SCC": YES_NO[scc_label],
-        "FAF": float(faf),
-        "TUE": float(tue),
-        "CALC": CALC_OPTIONS[calc_label],
-        "MTRANS": MTRANS_OPTIONS[mtrans_label],
-    }
-    try:
-        if INFERENCE_API_URL:
-            response = requests.post(
-                f"{INFERENCE_API_URL}/predict",
-                json=payload,
-                timeout=20,
-            )
-            response.raise_for_status()
-            result = response.json()
-        else:
-            result = predict_patient(payload, model=model)
-    except Exception as exc:  # noqa: BLE001
-        st.error(f"Falha na inferência: {exc}")
-        return
-
-    prediction = result["prediction"]
-    probabilities = [result["probabilities"][c] for c in result["classes"]]
-    classes = result["classes"]
-    imc = float(result["imc"])
-    label_pt = result.get("prediction_pt") or LABEL_PT.get(prediction, prediction.replace("_", " "))
-
-    left, right = st.columns([1, 1])
-    with left:
-        st.success(f"Diagnóstico predito: **{label_pt}**")
-        st.info(
-            f"**IMC calculado:** {imc:.2f} kg/m²  \n"
-            f"**Referência OMS (IMC):** {classify_imc(imc)}"
-        )
-        risk = result.get("behavioral_risk") or {}
-        if risk:
-            risk_text = (
-                f"**{risk.get('label', 'Hábitos')}** — o grau de obesidade segue o IMC (OMS); "
-                "os hábitos alimentares, o histórico familiar e o estilo de vida entram neste "
-                "perfil de risco para a conduta."
-            )
-            level = risk.get("level")
-            if level == "alto":
-                st.warning(risk_text)
-            elif level == "baixo":
-                st.success(risk_text)
-            else:
-                st.info(risk_text)
-    with right:
-        prob_df = pd.DataFrame(
-            {
-                "Classe": [LABEL_PT.get(c, c) for c in classes],
-                "Probabilidade (%)": [float(p) * 100 for p in probabilities],
-            }
-        ).sort_values("Probabilidade (%)", ascending=True)
-        fig_prob = px.bar(
-            prob_df,
-            x="Probabilidade (%)",
-            y="Classe",
-            orientation="h",
-            title="Confiança do modelo por nível",
-            color="Probabilidade (%)",
-            color_continuous_scale="Teal",
-        )
-        fig_prob.update_layout(yaxis_title="", xaxis_title="Probabilidade (%)")
-        st.plotly_chart(fig_prob, width="stretch")
-
-
-def feature_importance_frame(model, df: pd.DataFrame) -> pd.DataFrame | None:
-    classifier = model.named_steps.get("classifier")
-    preprocessor = model.named_steps.get("preprocessor")
-    if classifier is None or not hasattr(classifier, "feature_importances_"):
-        return None
-    try:
-        names = preprocessor.get_feature_names_out()
-    except Exception:
-        return None
-    importances = classifier.feature_importances_
-    if len(names) != len(importances):
-        return None
-    data = pd.DataFrame({"feature": names, "importance": importances})
-    return data.sort_values("importance", ascending=False)
-
-
-def render_dashboard(model, df: pd.DataFrame) -> None:
-    st.title("Painel analítico de fatores de risco da obesidade")
-    st.markdown(
-        "Visão epidemiológica da coorte hospitalar (n = {:,}) para apoiar "
-        "protocolos de triagem, educação nutricional e prevenção.".format(len(df))
+    horizon = st.radio("Horizonte (dias úteis)", HORIZON_OPTIONS, index=HORIZON_OPTIONS.index(DEFAULT_HORIZON), horizontal=True)
+    forecast = feature_engineering.recursive_forecast(
+        model,
+        series,
+        horizon=int(horizon),
+        feature_cols=cols,
+        residual_std=residual_std,
     )
 
-    k1, k2, k3, k4 = st.columns(4)
-    k1.metric("Total de pacientes", f"{len(df):,}".replace(",", "."))
-    k2.metric(
-        "Com histórico familiar",
-        f"{(df['family_history'] == 'yes').mean() * 100:.1f}%",
-    )
-    k3.metric("Sedentários (FAF ≤ 1)", f"{(df['FAF'] <= 1).mean() * 100:.1f}%")
-    k4.metric(
-        "Consumo frequente calórico",
-        f"{(df['FAVC'] == 'yes').mean() * 100:.1f}%",
-    )
-
-    st.subheader("Perfis de risco comportamental")
-    st.caption(
-        "Mesma leitura do diagnóstico individual: histórico familiar, alimentação, "
-        "atividade física, telas, álcool e transporte. O grau de obesidade continua "
-        "seguindo o IMC (OMS); aqui a equipe vê onde concentrar prevenção."
-    )
-    risk_order = [
-        RISK_LABELS["alto"],
-        RISK_LABELS["moderado"],
-        RISK_LABELS["baixo"],
-    ]
-    risk_color = {
-        RISK_LABELS["alto"]: "#C0392B",
-        RISK_LABELS["moderado"]: "#D68910",
-        RISK_LABELS["baixo"]: "#1A9B73",
-    }
-    share = df["risk_label"].value_counts(normalize=True)
-    r1, r2, r3 = st.columns(3)
-    r1.metric("Risco elevado", f"{share.get(RISK_LABELS['alto'], 0) * 100:.1f}%")
-    r2.metric("Risco moderado", f"{share.get(RISK_LABELS['moderado'], 0) * 100:.1f}%")
-    r3.metric("Menor risco", f"{share.get(RISK_LABELS['baixo'], 0) * 100:.1f}%")
-
-    p1, p2 = st.columns(2)
-    with p1:
-        fig_risk = px.histogram(
-            df,
-            x="risk_label",
-            color="risk_label",
-            title="Pacientes por perfil de risco",
-            category_orders={"risk_label": risk_order},
-            color_discrete_map=risk_color,
-        )
-        fig_risk.update_layout(
-            xaxis_title="",
-            yaxis_title="Pacientes",
+    recent = series.tail(180).copy()
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=recent["date"], y=recent["price"], name="Histórico IPEA", line=dict(color="#0A3D62", width=2)))
+    fig.add_trace(
+        go.Scatter(
+            x=forecast["date"],
+            y=forecast["upper"],
+            name="Limite superior",
+            line=dict(width=0),
             showlegend=False,
         )
-        st.plotly_chart(fig_risk, width="stretch")
-    with p2:
-        fig_risk_class = px.histogram(
-            df,
-            x="Obesity_PT",
-            color="risk_label",
-            barmode="stack",
-            title="Perfil de risco × nível de obesidade",
-            category_orders={
-                "Obesity_PT": [LABEL_PT[c] for c in CLASS_ORDER],
-                "risk_label": risk_order,
-            },
-            color_discrete_map=risk_color,
-            labels={"risk_label": "Perfil de risco"},
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=forecast["date"],
+            y=forecast["lower"],
+            name="Faixa de confiança",
+            fill="tonexty",
+            fillcolor="rgba(201,162,39,0.22)",
+            line=dict(width=0),
         )
-        fig_risk_class.update_layout(xaxis_title="", yaxis_title="Pacientes")
-        st.plotly_chart(fig_risk_class, width="stretch")
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=forecast["date"],
+            y=forecast["predicted"],
+            name="Projeção",
+            line=dict(color="#C9A227", width=3, dash="dash"),
+        )
+    )
+    st.plotly_chart(line_theme(fig, f"Brent FOB — histórico recente e projeção de {horizon} dias úteis"), use_container_width=True)
 
-    g1, g2 = st.columns(2)
-    with g1:
-        fig_dist = px.histogram(
-            df,
-            x="Obesity_PT",
-            title="Distribuição dos níveis de obesidade",
-            color="Obesity_PT",
-        )
-        fig_dist.update_layout(xaxis_title="", yaxis_title="Pacientes", showlegend=False)
-        st.plotly_chart(fig_dist, width="stretch")
-    with g2:
-        fig_fam = px.histogram(
-            df,
-            x="Obesity_PT",
-            color="family_history",
-            barmode="group",
-            title="Histórico familiar × nível de obesidade",
-            labels={"family_history": "Histórico familiar"},
-        )
-        fig_fam.update_layout(xaxis_title="", yaxis_title="Pacientes")
-        st.plotly_chart(fig_fam, width="stretch")
+    end_price = float(forecast["predicted"].iloc[-1])
+    delta = end_price - last_price
+    c1, c2, c3 = st.columns(3)
+    c1.metric(f"Preço projetado (D+{horizon})", format_usd(end_price), f"{delta:+.2f} US$")
+    c2.metric("Mínimo da faixa", format_usd(float(forecast["lower"].iloc[-1])))
+    c3.metric("Máximo da faixa", format_usd(float(forecast["upper"].iloc[-1])))
 
-    g3, g4 = st.columns(2)
-    with g3:
-        fig_act = px.box(
-            df,
-            x="Obesity_PT",
-            y="FAF",
-            color="Obesity_PT",
-            title="Frequência de atividade física (FAF) por nível",
-        )
-        fig_act.update_layout(xaxis_title="", showlegend=False)
-        st.plotly_chart(fig_act, width="stretch")
-    with g4:
-        fig_water = px.box(
-            df,
-            x="Obesity_PT",
-            y="CH2O",
-            color="Obesity_PT",
-            title="Consumo de água (CH2O) por nível",
-        )
-        fig_water.update_layout(xaxis_title="", showlegend=False)
-        st.plotly_chart(fig_water, width="stretch")
+    st.subheader("Simulador de impacto financeiro")
+    st.caption("Receita estimada = preço × volume. Útil para orçamento de trading, hedge e caixa.")
+    barrels = st.number_input("Volume de produção (barris)", min_value=1_000, max_value=50_000_000, value=DEFAULT_BARRELS, step=50_000)
+    current_rev = last_price * barrels
+    forecast_rev = end_price * barrels
+    impact = forecast_rev - current_rev
+    s1, s2, s3 = st.columns(3)
+    s1.metric("Receita ao preço atual", f"US$ {current_rev:,.0f}")
+    s2.metric(f"Receita projetada (D+{horizon})", f"US$ {forecast_rev:,.0f}")
+    s3.metric("Impacto estimado", f"US$ {impact:,.0f}", f"{(impact / current_rev) * 100:+.2f}%")
 
-    g5, g6 = st.columns(2)
-    with g5:
-        fig_favc = px.histogram(
-            df,
-            x="Obesity_PT",
-            color="FAVC",
-            barmode="group",
-            title="Consumo frequente de alimentos calóricos (FAVC)",
-            labels={"FAVC": "FAVC"},
-        )
-        fig_favc.update_layout(xaxis_title="", yaxis_title="Pacientes")
-        st.plotly_chart(fig_favc, width="stretch")
-    with g6:
-        fig_imc = px.box(
-            df,
-            x="Obesity_PT",
-            y="IMC",
-            color="Obesity_PT",
-            title="IMC por nível de obesidade",
-        )
-        fig_imc.update_layout(xaxis_title="", showlegend=False)
-        st.plotly_chart(fig_imc, width="stretch")
+    with st.expander("Tabela da projeção"):
+        table = forecast.copy()
+        table["date"] = table["date"].dt.strftime("%Y-%m-%d")
+        st.dataframe(table, use_container_width=True, hide_index=True)
 
-    st.subheader("Correlações e importância das variáveis")
-    c1, c2 = st.columns(2)
-    with c1:
-        num_cols = ["Age", "Height", "Weight", "IMC", "FCVC", "NCP", "CH2O", "FAF", "TUE"]
-        corr = df[num_cols].corr(numeric_only=True)
-        fig_corr = px.imshow(
-            corr,
-            text_auto=".2f",
-            color_continuous_scale="RdBu_r",
-            title="Matriz de correlação (variáveis numéricas)",
-            aspect="auto",
-        )
-        st.plotly_chart(fig_corr, width="stretch")
-    with c2:
-        imp = feature_importance_frame(model, df)
-        if imp is None:
-            st.info("Importância de atributos indisponível para este modelo.")
-        else:
-            top = imp.head(12).iloc[::-1]
-            fig_imp = px.bar(
-                top,
-                x="importance",
-                y="feature",
-                orientation="h",
-                title="Importância dos atributos (modelo campeão)",
-                color="importance",
-                color_continuous_scale="Teal",
-            )
-            fig_imp.update_layout(yaxis_title="", xaxis_title="Importância")
-            st.plotly_chart(fig_imp, width="stretch")
 
+def tab_history(series: pd.DataFrame) -> None:
     st.markdown(
-        """
-**Leitura clínica rápida**
-- Histórico familiar de excesso de peso concentra-se nos níveis mais altos de obesidade.
-- Baixa frequência de atividade física (FAF) acompanha classes de maior gravidade.
-- Consumo frequente de alimentos calóricos (FAVC) é majoritário na coorte e se associa a classes elevadas.
-- O painel de **perfis de risco** (elevado / moderado / menor risco) resume hábitos da coorte para priorizar prevenção; o grau I/II/III no paciente individual segue o IMC.
-        """
+        "A série oficial do IPEA (`EIA366_PBRENT366`) cobre o Brent FOB em US$/barril. "
+        "Os marcadores abaixo são os cinco choques exigidos no plano de EDA."
+    )
+    events = pd.DataFrame(GEOPOLITICAL_EVENTS)
+    events["date"] = pd.to_datetime(events["date"])
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=series["date"], y=series["price"], name="Brent (US$)", line=dict(color="#0A3D62", width=1.6)))
+    y_max = float(series["price"].max())
+    for _, event in events.iterrows():
+        fig.add_vline(x=event["date"], line_width=1, line_dash="dot", line_color="#C9A227")
+        fig.add_annotation(
+            x=event["date"],
+            y=y_max,
+            text=event["title"],
+            showarrow=False,
+            textangle=-90,
+            yanchor="top",
+            font=dict(size=10, color="#1B2838"),
+        )
+    st.plotly_chart(line_theme(fig, "Trajetória histórica do Brent e choques geopolíticos"), use_container_width=True)
+
+    st.subheader("Linha do tempo")
+    for event in GEOPOLITICAL_EVENTS:
+        st.markdown(f"**{event['date']} — {event['title']}**  \n{event['impact']}")
+
+    work = series.sort_values("date").copy()
+    work["ma_30"] = work["price"].rolling(30).mean()
+    work["ma_90"] = work["price"].rolling(90).mean()
+    work["vol_30"] = work["price"].rolling(30).std()
+    work["vol_annual"] = work["price"].pct_change().rolling(30).std() * (252 ** 0.5) * 100
+
+    c1, c2 = st.columns(2)
+    fig_ma = go.Figure()
+    fig_ma.add_trace(go.Scatter(x=work["date"], y=work["price"], name="Preço", line=dict(color="#9AA8B5", width=1)))
+    fig_ma.add_trace(go.Scatter(x=work["date"], y=work["ma_30"], name="Média 30d", line=dict(color="#0A3D62", width=2)))
+    fig_ma.add_trace(go.Scatter(x=work["date"], y=work["ma_90"], name="Média 90d", line=dict(color="#C9A227", width=2)))
+    c1.plotly_chart(line_theme(fig_ma, "Médias móveis"), use_container_width=True)
+
+    fig_vol = go.Figure()
+    fig_vol.add_trace(go.Scatter(x=work["date"], y=work["vol_annual"], name="Vol. anualizada 30d (%)", line=dict(color="#8C2F39")))
+    c2.plotly_chart(line_theme(fig_vol, "Volatilidade anualizada (janela de 30 dias)"), use_container_width=True)
+
+
+def tab_governance(bundle: dict, metrics_file: dict) -> None:
+    metrics = bundle.get("metrics") or metrics_file.get("metrics") or {}
+    comparison = bundle.get("comparison") or metrics_file.get("comparison") or []
+    horizons = bundle.get("horizon_metrics") or metrics_file.get("horizon_metrics") or {}
+    y_true = bundle.get("y_true")
+    y_pred = bundle.get("y_pred")
+    y_dates = bundle.get("y_dates")
+
+    if y_true is None:
+        y_true = metrics_file.get("y_true")
+        y_pred = metrics_file.get("y_pred")
+        y_dates = metrics_file.get("y_dates")
+
+    k1, k2, k3, k4 = st.columns(4)
+    k1.metric("MAPE (teste)", f"{metrics.get('mape', float('nan')):.2f}%")
+    k2.metric("RMSE", f"{metrics.get('rmse', float('nan')):.2f} US$")
+    k3.metric("MAE", f"{metrics.get('mae', float('nan')):.2f} US$")
+    k4.metric("R²", f"{metrics.get('r2', float('nan')):.3f}")
+
+    st.caption(
+        f"Validação temporal estrita: treino até {bundle.get('train_end', metrics_file.get('train_end', '—'))}, "
+        f"teste {bundle.get('test_start', metrics_file.get('test_start', '—'))} "
+        f"a {bundle.get('test_end', metrics_file.get('test_end', '—'))}. Sem embaralhamento."
+    )
+
+    if comparison:
+        st.subheader("Comparação de modelos")
+        st.dataframe(pd.DataFrame(comparison).round(3), use_container_width=True, hide_index=True)
+
+    if horizons:
+        st.subheader("MAPE recursivo por horizonte")
+        rows = [{"horizonte_dias": key, **value} for key, value in horizons.items()]
+        st.dataframe(pd.DataFrame(rows).round(3), use_container_width=True, hide_index=True)
+
+    if y_true is not None and y_pred is not None and y_dates is not None:
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=y_dates, y=y_true, name="Real", line=dict(color="#0A3D62", width=2)))
+        fig.add_trace(go.Scatter(x=y_dates, y=y_pred, name="Previsto", line=dict(color="#C9A227", width=2, dash="dash")))
+        st.plotly_chart(line_theme(fig, "Conjunto de teste — real vs. previsto (1 passo à frente)"), use_container_width=True)
+
+    rolling = bundle.get("rolling_cv") or metrics_file.get("rolling_cv") or []
+    if rolling:
+        st.subheader("Validação em janela expansiva")
+        st.dataframe(pd.DataFrame(rolling).round(3), use_container_width=True, hide_index=True)
+
+    st.info(
+        "Meta de governança do plano mestre: MAPE ≤ 5% no curto prazo (7 a 15 dias). "
+        "A métrica de 1 passo usa os atributos defasados reais; a métrica recursiva acumula erro de projeção."
     )
 
 
 def main() -> None:
-    model = load_model()
-    df = load_data()
-
-    st.sidebar.title("Navegação clínica")
-    page = st.sidebar.radio(
-        "Selecione a visão:",
-        ["Diagnóstico preditivo", "Painel analítico e insights"],
-    )
-    st.sidebar.markdown("---")
-    inference_mode = (
-        f"Inferência via API FastAPI (`{INFERENCE_API_URL}`)"
-        if INFERENCE_API_URL
-        else "Inferência local (modelo serializado)"
-    )
-    st.sidebar.caption(
-        "Tech Challenge Fase 4 — POSTECH FIAP  \n"
-        "Ferramenta de apoio à triagem hospitalar.  \n"
-        f"{inference_mode}"
+    st.title("Sistema preditivo do preço do petróleo Brent")
+    st.caption(
+        "Tech Challenge Fase 4 — Prova Substitutiva (FIAP POSTECH). "
+        "Série IPEA Data 1650971490 / EIA366_PBRENT366 · apoio à diretoria e à mesa de trading."
     )
 
-    if page == "Diagnóstico preditivo":
-        render_diagnosis(model)
-    else:
-        render_dashboard(model, df)
+    with st.sidebar:
+        st.header("Dados")
+        refresh = st.checkbox("Tentar atualizar no IPEA agora", value=False)
+        st.markdown(
+            "[Série oficial IPEA](http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view)"
+        )
+        st.markdown("Se a API do IPEA estiver lenta, o app usa o CSV versionado em `data/raw`.")
+
+    try:
+        series = load_raw_series(refresh=refresh)
+        bundle = load_bundle()
+        metrics_file = load_metrics_fallback()
+    except Exception as exc:  # noqa: BLE001
+        st.error(f"Falha ao carregar dados ou modelo: {type(exc).__name__}: {exc}")
+        st.stop()
+
+    forecast_tab, history_tab, gov_tab = st.tabs(
+        [
+            "Previsão e simulador",
+            "Análise histórica e geopolítica",
+            "Desempenho e governança",
+        ]
+    )
+    with forecast_tab:
+        tab_forecast(series, bundle)
+    with history_tab:
+        tab_history(series)
+    with gov_tab:
+        tab_governance(bundle, metrics_file)
 
 
 if __name__ == "__main__":

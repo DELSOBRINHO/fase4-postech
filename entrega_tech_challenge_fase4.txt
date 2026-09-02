@@ -1,27 +1,34 @@
 ======================================================================
-FIAP POSTECH - TECH CHALLENGE FASE 4: DATA VIZ & PRODUCTION MODELS
-TEMA: SISTEMA PREDITIVO HOSPITALAR DE DIAGNÓSTICO DE OBESIDADE
+FIAP POSTECH - TECH CHALLENGE FASE 4 (PROVA SUBSTITUTIVA)
+TEMA: PREVISÃO DO PREÇO DO PETRÓLEO BRENT (US$)
 ESTUDANTE: DELMIR BARTOLOMEU SOBRINHO
 ======================================================================
 
 1. LINK DA APLICAÇÃO EM PRODUÇÃO (STREAMLIT):
+https://precopetroleo.streamlit.app/
+
+O app do main (obesidade) permanece intacto em:
 https://avaliapeso.streamlit.app/
 
 2. LINK DO REPOSITÓRIO GITHUB (CÓDIGO-FONTE & PIPELINE):
-https://github.com/DELSOBRINHO/fase4-postech/tree/main
+https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05
 
-3. LINK DO PAINEL ANALÍTICO:
-Disponível na aba "Painel analítico e insights" integrada na própria aplicação Streamlit:
-https://avaliapeso.streamlit.app/
+3. NOTEBOOK PYTHON COM A PIPELINE DO MODELO:
+https://github.com/DELSOBRINHO/fase4-postech/blob/cursor/main-dev-2a05/notebooks/02_modelagem_forecasting.ipynb
 
-4. LINK DO VÍDEO DE APRESENTAÇÃO (YOUTUBE / LOOM):
-https://www.loom.com/share/[seu-link-de-video]
+Notebook complementar de EDA:
+https://github.com/DELSOBRINHO/fase4-postech/blob/cursor/main-dev-2a05/notebooks/01_extracao_eda_brent.ipynb
+
+4. SÉRIE OFICIAL (IPEA DATA):
+http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view
 
 ======================================================================
 RESUMO DOS RESULTADOS:
-- Acurácia do Modelo no Teste: 98,35% (Gradient Boosting; Random Forest 97,87%; mínimo exigido: 75%)
-- Algoritmo: Gradient Boosting Classifier com Pipeline de pré-processamento (StandardScaler + OneHotEncoder + IMC)
-
-- Interface: Streamlit Cloud com diagnóstico individual e métricas populacionais
-- Extra MLOps: API REST FastAPI (`/predict`) + frontend Streamlit no Docker Compose
+- Problema: projetar o preço diário do Brent FOB em dólar para apoio à decisão
+- Dados: IPEA EIA366_PBRENT366 (serid 1650971490), 10.049 dias úteis (1987-05-20 a 2026-08-25), último preço US$ 88,24
+- Validação: Time Series Split (últimos 60 dias úteis) + janela expansiva; sem shuffle
+- Campeão: Random Forest — MAPE 3,32% / RMSE 3,80 US$ / MAE 2,90 US$ (teste 1 passo)
+- Baseline naive lag-1: MAPE 3,19% (passeio aleatório; o campeão de ML fica empatado na prática)
+- Horizonte 7 dias úteis (recursivo): MAPE 2,24% (meta do plano: ≤ 5%)
+- Interface: Streamlit com previsão 7/15/30 dias úteis, simulador de receita e choques geopolíticos
 ======================================================================

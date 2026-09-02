@@ -56,11 +56,17 @@ O app tenta atualizar a API; se o IPEA estiver instável, usa o CSV em `data/raw
 - [`notebooks/01_extracao_eda_brent.ipynb`](notebooks/01_extracao_eda_brent.ipynb) — extração, trajetória, choques, decomposição e ADF.
 - [`notebooks/02_modelagem_forecasting.ipynb`](notebooks/02_modelagem_forecasting.ipynb) — pipeline completo de modelagem.
 
-## Produção
+## Produção (dois deploys, `main` intacto)
 
-Apontar o Streamlit Community Cloud para este branch, arquivo `app/app.py`.  
+| Branch | Produto | Streamlit |
+| --- | --- | --- |
+| `main` | Obesidade (entrega original) | [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/) — **não alterar** |
+| `develop` | Brent (prova substitutiva) | Novo app no Cloud, arquivo `app/app.py` |
+
+No Streamlit Community Cloud: **New app** → repo `DELSOBRINHO/fase4-postech` → branch **`develop`** → Main file `app/app.py`. Não reutilize o app do `main`.
+
 O Cloud monta o clone em `/mount/src/<repo>`; `app/repo_path.py` carrega `src/*.py` pelo caminho do arquivo para evitar colisão de import.
 
 Links de submissão: [`entrega_tech_challenge_fase4.txt`](entrega_tech_challenge_fase4.txt).
 
-Código-fonte: [https://github.com/DELSOBRINHO/fase4-postech](https://github.com/DELSOBRINHO/fase4-postech)
+Código-fonte (Brent): [https://github.com/DELSOBRINHO/fase4-postech/tree/develop](https://github.com/DELSOBRINHO/fase4-postech/tree/develop)

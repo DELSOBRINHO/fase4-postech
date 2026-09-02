@@ -9,9 +9,11 @@
 ## Passos
 
 1. Acesse [https://share.streamlit.io](https://share.streamlit.io) e autorize o GitHub.
-2. **New app** → repositório `DELSOBRINHO/fase4-postech`, branch `cursor/main-dev-2a05` (ou o branch de entrega).
+2. **New app** (não edite o app já publicado no `main`) → repositório `DELSOBRINHO/fase4-postech`, branch **`develop`**.
 3. Main file path: `app/app.py`.
 4. Deploy.
+
+O `main` continua com o app de obesidade em [https://avaliapeso.streamlit.app/](https://avaliapeso.streamlit.app/). Este guia é só para o **segundo** app (Brent).
 
 A aplicação resolve dados e modelo a partir da raiz:
 

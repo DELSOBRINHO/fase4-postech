@@ -5,16 +5,17 @@ ESTUDANTE: DELMIR BARTOLOMEU SOBRINHO
 ======================================================================
 
 1. LINK DA APLICAÇÃO EM PRODUÇÃO (STREAMLIT):
-[Publicar o branch cursor/main-dev-2a05 no Streamlit Community Cloud — Main file: app/app.py]
+[Novo app no Streamlit Community Cloud apontando para o branch develop — Main file: app/app.py]
+O app do main (obesidade, https://avaliapeso.streamlit.app/) permanece intacto.
 
 2. LINK DO REPOSITÓRIO GITHUB (CÓDIGO-FONTE & PIPELINE):
-https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05
+https://github.com/DELSOBRINHO/fase4-postech/tree/develop
 
 3. NOTEBOOK PYTHON COM A PIPELINE DO MODELO:
-https://github.com/DELSOBRINHO/fase4-postech/blob/cursor/main-dev-2a05/notebooks/02_modelagem_forecasting.ipynb
+https://github.com/DELSOBRINHO/fase4-postech/blob/develop/notebooks/02_modelagem_forecasting.ipynb
 
 Notebook complementar de EDA:
-https://github.com/DELSOBRINHO/fase4-postech/blob/cursor/main-dev-2a05/notebooks/01_extracao_eda_brent.ipynb
+https://github.com/DELSOBRINHO/fase4-postech/blob/develop/notebooks/01_extracao_eda_brent.ipynb
 
 4. SÉRIE OFICIAL (IPEA DATA):
 http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view

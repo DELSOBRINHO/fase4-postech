@@ -67,6 +67,19 @@ O Cloud do Brent está neste branch (`cursor/main-dev-2a05`, arquivo `app/app.py
 
 O Cloud monta o clone em `/mount/src/<repo>`; `app/repo_path.py` carrega `src/*.py` pelo caminho do arquivo para evitar colisão de import.
 
+## Próximos Passos e Melhorias Futuras para o Negócio
+
+O modelo atual e a aplicação Streamlit atendem aos requisitos de acurácia estatística e de apoio à decisão previstos no escopo da prova substitutiva. As evoluções abaixo ficam mapeadas para fases seguintes de maturidade corporativa — não fazem parte desta entrega.
+
+1. **Acurácia direcional (Mean Directional Accuracy — MDA)**  
+   Incorporar a MDA para medir o percentual de acerto da tendência (alta versus baixa). O impacto é direto na mesa de tesouraria e de trading: a direção do preço, mais do que o valor pontual, sustenta a montagem de hedges cambiais e de derivativos.
+
+2. **Simulador de testes de estresse e choques geopolíticos**  
+   Incluir na interface um módulo de cenários exógenos (cortes súbitos de produção da OPEP+, desescalada de conflitos ou gargalos logísticos). O tomador de decisão passa a medir a sensibilidade do caixa corporativo em situações extremas, além da trajetória-base do modelo.
+
+3. **Ingestão de variáveis macroeconômicas exógenas**  
+   Ampliar a engenharia de atributos com indicadores correlacionados ao petróleo em moeda forte — Índice Dólar (DXY), taxa de juros do Federal Reserve e relatórios semanais de estoques da EIA. A leitura de oferta, demanda e câmbio reduz o risco de projeções isoladas da série de preço.
+
 Links de submissão: [`entrega_tech_challenge_fase4.txt`](entrega_tech_challenge_fase4.txt).
 
 Código-fonte (Brent): [https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05](https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05)

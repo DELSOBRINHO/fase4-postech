@@ -33,7 +33,7 @@ def _load(mod_name: str, file_path: Path):
 
 
 def load_project_modules(root: Path | None = None):
-    """Devolve (root, data_pipeline, inference)."""
+    """Devolve (root, data_loader, feature_engineering, model_trainer)."""
     project_root = Path(root) if root is not None else ROOT
     src_dir = project_root / "src"
 
@@ -42,11 +42,15 @@ def load_project_modules(root: Path | None = None):
     pkg.__file__ = str(src_dir / "__init__.py")
     sys.modules["src"] = pkg
 
-    data_pipeline = _load("src.data_pipeline", src_dir / "data_pipeline.py")
-    sys.modules["data_pipeline"] = data_pipeline
-    pkg.data_pipeline = data_pipeline
+    data_loader = _load("src.data_loader", src_dir / "data_loader.py")
+    sys.modules["data_loader"] = data_loader
+    pkg.data_loader = data_loader
 
-    inference = _load("src.inference", src_dir / "inference.py")
-    sys.modules["inference"] = inference
-    pkg.inference = inference
-    return project_root, data_pipeline, inference
+    feature_engineering = _load("src.feature_engineering", src_dir / "feature_engineering.py")
+    sys.modules["feature_engineering"] = feature_engineering
+    pkg.feature_engineering = feature_engineering
+
+    model_trainer = _load("src.model_trainer", src_dir / "model_trainer.py")
+    sys.modules["model_trainer"] = model_trainer
+    pkg.model_trainer = model_trainer
+    return project_root, data_loader, feature_engineering, model_trainer

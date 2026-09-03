@@ -1,5 +1,4 @@
 # Extra de empacotamento (não substitui o Streamlit Cloud).
-# Imagem enxuta: só o necessário para servir o app.
 
 FROM python:3.12-slim
 
@@ -21,11 +20,11 @@ RUN pip install --upgrade pip \
 
 COPY app/ /app/app/
 COPY src/ /app/src/
-COPY api/ /app/api/
 COPY data/ /app/data/
+COPY documentation/ /app/documentation/
 COPY .streamlit/ /app/.streamlit/
 
-EXPOSE 8501 8000
+EXPOSE 8501
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl --fail http://localhost:8501/_stcore/health || exit 1

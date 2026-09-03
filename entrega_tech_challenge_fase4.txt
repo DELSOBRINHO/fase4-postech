@@ -7,9 +7,6 @@ ESTUDANTE: DELMIR BARTOLOMEU SOBRINHO
 1. LINK DA APLICAÇÃO EM PRODUÇÃO (STREAMLIT):
 https://precopetroleo.streamlit.app/
 
-O app do main (obesidade) permanece intacto em:
-https://avaliapeso.streamlit.app/
-
 2. LINK DO REPOSITÓRIO GITHUB (CÓDIGO-FONTE & PIPELINE):
 https://github.com/DELSOBRINHO/fase4-postech/tree/cursor/main-dev-2a05
 
